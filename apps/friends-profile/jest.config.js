@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'coding',
+  displayName: 'friends-profile',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +8,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/apps/coding',
+  coverageDirectory: '../../coverage/apps/friends-profile',
   transform: {
     '^.+\\.(ts|js|html)$': 'jest-preset-angular',
   },

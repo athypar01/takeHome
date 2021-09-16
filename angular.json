@@ -1,21 +1,21 @@
 {
   "version": 1,
   "projects": {
-    "coding": {
+    "friends-profile": {
       "projectType": "application",
-      "root": "apps/coding",
-      "sourceRoot": "apps/coding/src",
+      "root": "apps/friends-profile",
+      "sourceRoot": "apps/friends-profile/src",
       "prefix": "secureworks",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/coding",
-            "index": "apps/coding/src/index.html",
-            "main": "apps/coding/src/main.ts",
-            "polyfills": "apps/coding/src/polyfills.ts",
-            "tsConfig": "apps/coding/tsconfig.app.json",
+            "outputPath": "dist/apps/friends-profile",
+            "index": "apps/friends-profile/src/index.html",
+            "main": "apps/friends-profile/src/main.ts",
+            "polyfills": "apps/friends-profile/src/polyfills.ts",
+            "tsConfig": "apps/friends-profile/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "coding:build:production"
+              "browserTarget": "friends-profile:build:production"
             },
             "development": {
-              "browserTarget": "coding:build:development"
+              "browserTarget": "friends-profile:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,43 +80,42 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "coding:build"
+            "browserTarget": "friends-profile:build"
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
-              "apps/coding/src/**/*.ts",
-              "apps/coding/src/**/*.html"
+              "apps/friends-profile/src/**/*.ts",
+              "apps/friends-profile/src/**/*.html"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/coding"],
+          "outputs": ["coverage/apps/friends-profile"],
           "options": {
-            "jestConfig": "apps/coding/jest.config.js",
+            "jestConfig": "apps/friends-profile/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "coding-e2e": {
-      "root": "apps/coding-e2e",
-      "sourceRoot": "apps/coding-e2e/src",
+    "friends-profile-e2e": {
+      "root": "apps/friends-profile-e2e",
+      "sourceRoot": "apps/friends-profile-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/coding-e2e/cypress.json",
-            "devServerTarget": "coding:serve:development",
-            "tsConfig": "apps/coding-e2e/tsconfig.json"
+            "cypressConfig": "apps/friends-profile-e2e/cypress.json",
+            "devServerTarget": "friends-profile:serve:development"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "coding:serve:production"
+              "devServerTarget": "friends-profile:serve:production"
             }
           }
         },
@@ -124,7 +123,7 @@
           "builder": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["apps/coding-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": ["apps/friends-profile-e2e/**/*.{js,ts}"]
           }
         }
       }

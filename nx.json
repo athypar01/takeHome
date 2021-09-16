@@ -27,13 +27,13 @@
     ]
   },
   "projects": {
-    "coding": {
+    "friends-profile": {
       "tags": [],
       "implicitDependencies": ["shared-assets", "shared-styles"]
     },
-    "coding-e2e": {
+    "friends-profile-e2e": {
       "tags": [],
-      "implicitDependencies": ["coding"]
+      "implicitDependencies": ["friends-profile"]
     },
     "shared-assets": {
       "tags": ["scope:shared", "type:assets"]
