@@ -134,14 +134,6 @@
       "sourceRoot": "libs/shared/assets/src",
       "prefix": "secureworks",
       "architect": {
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/assets"],
-          "options": {
-            "jestConfig": "libs/shared/assets/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -184,14 +176,6 @@
       "sourceRoot": "libs/shared/environments/src",
       "prefix": "secureworks",
       "architect": {
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/environments"],
-          "options": {
-            "jestConfig": "libs/shared/environments/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -209,14 +193,6 @@
       "sourceRoot": "libs/shared/styles/src",
       "prefix": "secureworks",
       "architect": {
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/styles"],
-          "options": {
-            "jestConfig": "libs/shared/styles/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
