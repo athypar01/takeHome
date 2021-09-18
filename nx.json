@@ -38,6 +38,12 @@
     "layout": {
       "tags": []
     },
+    "mock-api-data": {
+      "tags": []
+    },
+    "mock-api-requests": {
+      "tags": []
+    },
     "shared-assets": {
       "tags": ["scope:shared", "type:assets"]
     },
