@@ -15,7 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@secureworks/apiMockData": [
+        "libs/mock-api-data/src/index.ts"
+      ],
       "@secureworks/layout": ["libs/layout/src/index.ts"],
+      "@secureworks/mockApiRequests": ["libs/mock-api-requests/src/index.ts"],
       "@secureworks/shared/assets": ["libs/shared/assets/src/index.ts"],
       "@secureworks/shared/data-access": [
         "libs/shared/data-access/src/index.ts"

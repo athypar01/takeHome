@@ -153,6 +153,53 @@
         }
       }
     },
+    "mock-api-data": {
+      "projectType": "library",
+      "root": "libs/mock-api-data",
+      "sourceRoot": "libs/mock-api-data/src",
+      "prefix": "secureworks",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/mock-api-data"],
+          "options": {
+            "jestConfig": "libs/mock-api-data/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/mock-api-data/src/**/*.ts",
+              "libs/mock-api-data/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "mock-api-requests": {
+      "root": "libs/mock-api-requests",
+      "sourceRoot": "libs/mock-api-requests/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/mock-api-requests/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/mock-api-requests"],
+          "options": {
+            "jestConfig": "libs/mock-api-requests/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-assets": {
       "projectType": "library",
       "root": "libs/shared/assets",

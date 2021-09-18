@@ -1,8 +1,10 @@
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {MatButtonModule} from '@angular/material/button';
 
+import { MockApiRequestsModule } from '@secureworks/mockApiRequests';
+import { mockApiDataServices } from '@secureworks/apiMockData';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 
@@ -12,7 +14,8 @@ import { AppRoutingModule } from './app.routing';
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
-    MatButtonModule
+    HttpClientModule,
+    MockApiRequestsModule.forRoot(mockApiDataServices),
   ],
   providers: [],
   bootstrap: [AppComponent],
