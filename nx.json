@@ -1,0 +1,57 @@
+{
+  "npmScope": "secureworks",
+  "affected": {
+    "defaultBase": "master"
+  },
+  "implicitDependencies": {
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
+    }
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "projects": {
+    "friends-profile": {
+      "tags": [],
+      "implicitDependencies": ["shared-assets", "shared-styles"]
+    },
+    "friends-profile-e2e": {
+      "tags": [],
+      "implicitDependencies": ["friends-profile"]
+    },
+    "layout": {
+      "tags": []
+    },
+    "shared-assets": {
+      "tags": ["scope:shared", "type:assets"]
+    },
+    "shared-data-access": {
+      "tags": ["scope:shared", "type:data-access"]
+    },
+    "shared-environments": {
+      "tags": ["scope:shared", "type:environments"]
+    },
+    "shared-styles": {
+      "tags": ["scope:shared", "type:styles"]
+    },
+    "user": {
+      "tags": []
+    }
+  }
+}
