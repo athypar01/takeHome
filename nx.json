@@ -35,6 +35,9 @@
       "tags": [],
       "implicitDependencies": ["friends-profile"]
     },
+    "icons": {
+      "tags": []
+    },
     "layout": {
       "tags": []
     },

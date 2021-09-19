@@ -13,11 +13,11 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
-      "@secureworks/apiMockData": [
-        "libs/mock-api-data/src/index.ts"
-      ],
+      "@secureworks/apiMockData": ["libs/mock-api-data/src/index.ts"],
+      "@secureworks/icons": ["libs/icons/src/index.ts"],
       "@secureworks/layout": ["libs/layout/src/index.ts"],
       "@secureworks/mockApiRequests": ["libs/mock-api-requests/src/index.ts"],
       "@secureworks/shared/assets": ["libs/shared/assets/src/index.ts"],

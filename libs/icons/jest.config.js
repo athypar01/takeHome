@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'user',
+  displayName: 'icons',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,12 +8,9 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mock-api-data',
+  coverageDirectory: '../../coverage/libs/icons',
   transform: {
     '^.+\\.(ts|js|html)$': 'jest-preset-angular',
-  },
-  moduleNameMapper: {
-    "^lodash-es$": "lodash"
   },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',

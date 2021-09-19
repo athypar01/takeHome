@@ -29,7 +29,10 @@
                 "output": "assets"
               }
             ],
-            "styles": ["libs/shared/styles/index.scss"],
+            "styles": [
+              "libs/shared/styles/theme/_tailwind.scss",
+              "libs/shared/styles/index.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -124,6 +127,31 @@
           "outputs": ["{options.outputFile}"],
           "options": {
             "lintFilePatterns": ["apps/friends-profile-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "icons": {
+      "projectType": "library",
+      "root": "libs/icons",
+      "sourceRoot": "libs/icons/src",
+      "prefix": "secureworks",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/icons"],
+          "options": {
+            "jestConfig": "libs/icons/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/icons/src/**/*.ts",
+              "libs/icons/src/**/*.html"
+            ]
           }
         }
       }
