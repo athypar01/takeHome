@@ -25,7 +25,7 @@
           <div class="flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
             <div
               class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-              {{user?.name ? user?.name.charAt(0) : 'N'}}
+              {{user?.name ? user.name.charAt(0) : 'N'}}
             </div>
           </div>
           <!-- Actions -->
@@ -67,7 +67,7 @@
           <ng-container>
             <div class="flex">
               <mat-icon [svgIcon]="'heroicons_outline:user-group'"></mat-icon>
-              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends?.length > 0">
+              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends && friends.length !== 0">
                 <ng-container *ngFor="let friend of friends; trackBy: trackByFn">
                   <div class="flex items-center leading-6">
                     <div class="sm:ml-1">
