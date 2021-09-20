@@ -156,7 +156,6 @@ export class UserService {
               console.log(index)
 
               // Update the contact
-              // users[index] = updatedUser;
               Object.assign(users[index], updatedUser)
 
               // Update the users
@@ -193,11 +192,9 @@ export class UserService {
       take(1),
       switchMap((users: User[]) =>
         this._httpClient
-          .delete('api/users/contact', { params: { id } })
+          .delete('api/user/contact', { params: { id } })
           .pipe(
             map((isDeleted: boolean | any) => {
-
-              console.log(isDeleted)
 
               // Find the index of the deleted contact
               const index = users.findIndex((item) => item.id === id);

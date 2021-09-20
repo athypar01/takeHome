@@ -156,6 +156,5 @@ export class UserListMockApi {
         // Return the response
         return [200, true];
       });
-
   }
 }

@@ -1,6 +1,31 @@
 {
   "version": 1,
   "projects": {
+    "components-confirmation": {
+      "projectType": "library",
+      "root": "libs/components/confirmation",
+      "sourceRoot": "libs/components/confirmation/src",
+      "prefix": "secureworks",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/components/confirmation"],
+          "options": {
+            "jestConfig": "libs/components/confirmation/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/components/confirmation/src/**/*.ts",
+              "libs/components/confirmation/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
     "friends-profile": {
       "projectType": "application",
       "root": "apps/friends-profile",

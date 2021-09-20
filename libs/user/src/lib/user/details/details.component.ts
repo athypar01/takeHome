@@ -1,13 +1,14 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatSelect } from '@angular/material/select';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
-import { compose } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+
+import { ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from '../list/list.component';
 import { UserService } from '../user.service';
 import { User } from '../user.types';
@@ -37,6 +38,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private _activatedRoute: ActivatedRoute,
     private _changeDetectorRef: ChangeDetectorRef,
     private _userListComponent: ListComponent,
+    private _confirmationService: ConfirmationService,
     private _userService: UserService,
     private _formBuilder: FormBuilder,
     private _renderer2: Renderer2,
@@ -252,7 +254,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     // const tag = this.filteredUsers[0];
     // const isTagApplied = this.users.find((id) => id.name === tag.name);
 
-    // // If the found tag is already applied to the contact...
+    // // If the found tag is already applied to the User...
     // if (isTagApplied) {
     //   // Remove the tag from the contact
     //   this.removeTagFromContact(tag);
@@ -298,23 +300,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this._changeDetectorRef.markForCheck();
   }
 
-  friendExist(user: any, tag: any) {
-    return this.user.friends.find((x: any) => x.id === tag.id) ? true : false
-  }
 
-
-  /**
- * Toggle contact tag
- *
- * @param tag
- */
-  toggleContactTag(tag: any): void {
-    if (this.user.friends.length > 0 && this.user.friends.includes(tag.id)) {
-      this.removeTagFromContact(tag);
-    } else {
-      this.addTagToContact(tag);
-    }
-  }
 
     /**
    * Toggle edit mode
@@ -350,26 +336,77 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
- * Update the contact
+ * Update the user and user contacts
  */
-  updateContact(): void {
+  updateUser(): void {
     // Get the contact object
     const userData = this.userForm.value;
 
     // Update the contact on the server
-    this._userService.updateContact(userData.id, userData).pipe(debounceTime(300)).subscribe(async (x) => {
-      await x;
-      this._router.navigate(['../'], { relativeTo: this._activatedRoute });
-      // this._router.navigate(['./', this.user.id], { relativeTo: this._activatedRoute });
+    this._userService.updateContact(userData.id, userData).pipe(debounceTime(300)).subscribe(async (res) => {
+      await res;
+      this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
       // Toggle the edit mode off
-      // this.toggleEditMode(false);
+      this.toggleEditMode(false);
     });
-
   }
 
-  deleteContact() {
+  /**
+ * Delete the user and user contacts
+ */
+  deleteUser() {
+    // Open the confirmation dialog
+    const confirmation = this._confirmationService.open({
+      title: 'Delete User',
+      message:
+        'Are you sure you want to delete this user? This action cannot be undone!',
+      actions: {
+        confirm: {
+          label: 'Delete',
+        },
+      },
+    });
 
+    // Subscribe to the confirmation dialog closed action
+    confirmation.afterClosed().subscribe((result) => {
+      // If the confirm button pressed...
+      if (result === 'confirmed') {
+        // Get the current user id
+        const id = this.user.id;
+
+        // Get the next/previous user id
+        const currentUserIndex = this.users.findIndex(
+          (item) => item.id === id
+        );
+        const nextUserIndex =
+          currentUserIndex +
+          (currentUserIndex === this.users.length - 1 ? -1 : 1);
+        const nextUserId =
+          this.users.length === 1 && this.users[0].id === id
+            ? null
+            : this.users[nextUserIndex].id;
+
+        // Delete the user
+        this._userService.deleteContact(id).subscribe((isDeleted) => {
+          // Return if the user wasn't deleted...
+          if (!isDeleted) {
+            return;
+          } else {
+            // Navigate to the parent view
+            this._router.navigate(['../'], {
+              relativeTo: this._activatedRoute,
+            });
+          }
+
+          // Toggle the edit mode off
+          this.toggleEditMode(false);
+        });
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+      }
+    });
   }
 
 }

@@ -17,6 +17,9 @@
     "baseUrl": ".",
     "paths": {
       "@secureworks/apiMockData": ["libs/mock-api-data/src/index.ts"],
+      "@secureworks/confirmation": [
+        "libs/components/confirmation/src/index.ts"
+      ],
       "@secureworks/icons": ["libs/icons/src/index.ts"],
       "@secureworks/layout": ["libs/layout/src/index.ts"],
       "@secureworks/mockApiRequests": ["libs/mock-api-requests/src/index.ts"],

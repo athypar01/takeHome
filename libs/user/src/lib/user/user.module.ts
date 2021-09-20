@@ -1,3 +1,4 @@
+import { ConfirmationService } from './../../../../components/confirmation/src/lib/confirmation.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserComponent } from './user.component';
@@ -53,9 +54,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSidenavModule,
     MatTableModule,
     MatTooltipModule,
-    MatDialogModule,
+    MatDialogModule
     // StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
     // EffectsModule.forFeature([UsersEffects]),
   ],
+  providers: [
+    ConfirmationService,
+  ]
 })
 export class UserModule {}

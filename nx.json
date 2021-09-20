@@ -27,6 +27,9 @@
     ]
   },
   "projects": {
+    "components-confirmation": {
+      "tags": []
+    },
     "friends-profile": {
       "tags": [],
       "implicitDependencies": ["shared-assets", "shared-styles"]
