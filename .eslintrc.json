@@ -5,6 +5,12 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "parserOptions": {
+        "project": [
+          "apps/friends-profile/tsconfig.*?.json",
+          "libs/**/**/tsconfig.*?.json"
+        ]
+      },
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -18,7 +24,8 @@
               }
             ]
           }
-        ]
+        ],
+        "@typescript-eslint/await-thenable": "error"
       },
       "plugins": ["ngrx"],
       "extends": ["plugin:ngrx/recommended"]

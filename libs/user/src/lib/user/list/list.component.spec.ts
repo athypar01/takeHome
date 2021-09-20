@@ -1,8 +1,13 @@
+import { MatIconModule } from '@angular/material/icon';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterTestingModule } from '@angular/router/testing';
 
+import { ConfirmationModule, ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from './list.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -12,9 +17,16 @@ describe('ListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        MatSidenavModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatIconModule,
+        ConfirmationModule
       ],
-      declarations: [ ListComponent ]
+      declarations: [ ListComponent ],
+      providers: [ConfirmationService]
     })
     .compileComponents();
   });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, cloneDeep } from 'lodash-es';
 import { v4 as uuid } from 'uuid';
 import { Injectable } from '@angular/core';

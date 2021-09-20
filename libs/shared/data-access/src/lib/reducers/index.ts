@@ -2,7 +2,7 @@ import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import { environment } from '@secureworks/shared/environments';
 import { debug } from './debug';
 
-export interface State { }
+export interface State {}
 
 export const reducers: ActionReducerMap<State> = {};
 

@@ -25,7 +25,7 @@
           <div class="flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
             <div
               class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-              {{user.name ? user.name.charAt(0) : 'N'}}
+              {{user?.name ? user?.name.charAt(0) : 'N'}}
             </div>
           </div>
           <!-- Actions -->
@@ -37,7 +37,7 @@
           </div>
         </div>
         <!-- Name -->
-        <div class="mt-3 text-4xl font-bold truncate">{{user.name}}</div>
+        <div class="mt-3 text-4xl font-bold truncate">{{user?.name}}</div>
         <!-- Details -->
         <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
 
@@ -45,7 +45,7 @@
           <ng-container>
             <div class="flex sm:items-center">
               <mat-icon [svgIcon]="'heroicons_outline:clock'"></mat-icon>
-              <div class="ml-6 leading-6">{{user.age}}</div>
+              <div class="ml-6 leading-6">{{user?.age}}</div>
               <div class="text-md truncate text-secondary">
                 <span class="font-medium mx-2">years</span>
               </div>
@@ -56,7 +56,7 @@
           <ng-container>
             <div class="flex sm:items-center">
               <mat-icon [svgIcon]="'heroicons_outline:scale'"></mat-icon>
-              <div class="ml-6 leading-6">{{user.weight}}</div>
+              <div class="ml-6 leading-6">{{user?.weight}}</div>
               <div class="text-md truncate text-secondary">
                 <span class="font-medium mx-2">lbs</span>
               </div>
@@ -67,23 +67,23 @@
           <ng-container>
             <div class="flex">
               <mat-icon [svgIcon]="'heroicons_outline:user-group'"></mat-icon>
-              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends.length > 0">
+              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends?.length > 0">
                 <ng-container *ngFor="let friend of friends; trackBy: trackByFn">
                   <div class="flex items-center leading-6">
                     <div class="sm:ml-1">
-                      {{friend.name}},
+                      {{friend?.name}},
                     </div>
                     <div class="text-md truncate text-secondary">
-                      <span class="font-medium mx-1">{{friend.age}} years,</span>
-                      <span class="font-medium mx-1">{{friend.weight}} lbs</span>
+                      <span class="font-medium mx-1">{{friend?.age}} years,</span>
+                      <span class="font-medium mx-1">{{friend?.weight}} lbs</span>
                     </div>
                   </div>
                 </ng-container>
               </div>
-              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends.length === 0">
+              <div class="min-w-0 ml-6 space-y-1" *ngIf="friends?.length === 0">
                 <div class="flex items-center leading-6">
                   <div class="sm:ml-1">
-                    {{friends.length}} friends
+                    {{friends?.length}} friends
                   </div>
                 </div>
               </div>
@@ -183,7 +183,7 @@
                         <span class="font-medium whitespace-nowrap">{{friendsFormControl.value[2]}} </span>
                         <span class="example-additional-selection"
                           *ngIf="friendsFormControl.value?.length >= 4">
-                          (+{{friendsFormControl.value.length - 3}} {{friendsFormControl.value?.length - 3 === 1 ? 'other' : 'others'}})
+                          (+{{friendsFormControl.value?.length - 3}} {{friendsFormControl.value?.length - 3 === 1 ? 'other' : 'others'}})
                         </span>
                       </div>
                     </span>
@@ -195,8 +195,8 @@
                         <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden"></span>
                       </span>
                     </mat-select-trigger>
-                    <mat-option *ngFor="let user of users" [value]="user">{{user.name}}, {{user.age}},
-                      {{user.weight}}
+                    <mat-option *ngFor="let user of users" [value]="user">{{user?.name}}, {{user?.age}},
+                      {{user?.weight}}
                     </mat-option>
                   </mat-select>
 

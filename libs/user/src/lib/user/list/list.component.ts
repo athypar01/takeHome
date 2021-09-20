@@ -20,7 +20,7 @@ export class ListComponent implements OnInit {
   drawerMode: 'side' | 'over' = 'side';
   openStatus = false;
   users$: Observable<User[]>;
-  usersCount: number = 0;
+  usersCount = 0;
   searchInputControl: FormControl = new FormControl();
   selectedUser: User | null = null;
   private _unsubscribeAll: Subject<any> = new Subject<any>();

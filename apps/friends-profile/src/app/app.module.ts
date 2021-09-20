@@ -1,19 +1,21 @@
-import { IconsShareableModule } from '@secureworks/icons';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { EffectsModule } from '@ngrx/effects';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { StoreModule } from '@ngrx/store';
+import { DataPersistence } from '@nrwl/angular';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 import { MockApiRequestsModule } from '@secureworks/mockApiRequests';
 import { mockApiDataServices } from '@secureworks/apiMockData';
+import { IconsShareableModule } from '@secureworks/icons';
+import { environment } from '@secureworks/shared/environments';
+import { UserModule } from '@secureworks/user';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
-import { StoreModule } from '@ngrx/store';
-import { environment } from '@secureworks/shared/environments';
-import { DataPersistence } from '@nrwl/angular';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,6 +26,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     HttpClientModule,
     MockApiRequestsModule.forRoot(mockApiDataServices),
     IconsShareableModule.forRoot(),
+    UserModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

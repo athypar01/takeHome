@@ -1,15 +1,6 @@
-import { ConfirmationService } from './../../../../components/confirmation/src/lib/confirmation.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserComponent } from './user.component';
-import { DetailsComponent } from './details/details.component';
-import { ListComponent } from './list/list.component';
 import { RouterModule } from '@angular/router';
-import { userRoutes } from './user.routing';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import * as fromUsers from './+state/users.reducer';
-import { UsersEffects } from './+state/users.effects';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,6 +18,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
+
+import { ConfirmationService } from '@secureworks/confirmation';
+import { UserComponent } from './user.component';
+import { DetailsComponent } from './details/details.component';
+import { ListComponent } from './list/list.component';
+import { userRoutes } from './user.routing';
 
 @NgModule({
   declarations: [
@@ -54,7 +51,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatSidenavModule,
     MatTableModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+
     // StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
     // EffectsModule.forFeature([UsersEffects]),
   ],
