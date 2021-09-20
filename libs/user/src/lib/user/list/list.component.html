@@ -1,37 +1,18 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
-  <mat-drawer-container
-    class="flex-auto h-full bg-card dark:bg-transparent"
-    (backdropClick)="onBackdropClicked()"
-  >
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden cdkScrollable">
+  <mat-drawer-container class="flex-auto h-full bg-card dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+
     <!-- Drawer -->
-    <mat-drawer
-      class="w-full md:w-160 dark:bg-gray-900"
-      [mode]="drawerMode"
-      [opened]="'false'"
-      [position]="'end'"
-      [disableClose]="true"
-      #matDrawer
-    >
+    <mat-drawer class="w-full md:w-160 dark:bg-gray-900" [mode]="drawerMode" [opened]="'false'" [position]="'end'"
+      [disableClose]="true" #matDrawer>
       <router-outlet></router-outlet>
+
     </mat-drawer>
 
     <mat-drawer-content class="flex flex-col">
       <!-- Main -->
       <div class="flex-auto">
         <!-- Header -->
-        <div
-          class="
-            flex flex-col
-            sm:flex-row
-            md:flex-col
-            flex-auto
-            justify-between
-            py-8
-            px-6
-            md:px-8
-            border-b
-          "
-        >
+        <div class="flex flex-col sm:flex-row md:flex-col flex-auto justify-between py-8 px-6 md:px-8 border-b">
           <!-- Title -->
           <div (click)="onBackdropClicked()">
             <div class="text-4xl font-extrabold tracking-tight leading-none">
@@ -42,72 +23,38 @@
               <ng-container *ngIf="usersCount > 0">
                 {{ usersCount }}
               </ng-container>
-              {{
-                usersCount
-                  | i18nPlural
-                    : {
-                        '=0': 'No users',
-                        '=1': 'user',
-                        other: 'users'
-                      }
-              }}
+              {{usersCount | i18nPlural: {'=0': 'No users','=1': 'user', other: 'users'} }}
             </div>
+
           </div>
 
           <!-- Main actions -->
           <div class="flex items-center mt-4 sm:mt-0 md:mt-4" (click)="onBackdropClicked()">
             <!-- Search -->
             <div class="flex-auto">
-              <mat-form-field
-                class="
-                  secureworks-mat-rounded
-                  secureworks-mat-dense
-                  secureworks-mat-no-subscript
-                  flex-auto
-                  lg:ml-0
-                  w-full
-                  px-5
-                "
-              >
-                <mat-icon
-                  class="icon-size-5"
-                  matPrefix
-                  [svgIcon]="'heroicons_solid:search'"
-                ></mat-icon>
-                <input
-                  matInput
-                  [formControl]="searchInputControl"
-                  [autocomplete]="'off'"
-                  [placeholder]="'Search user'"
-                />
+              <mat-form-field class="secureworks-mat-rounded secureworks-mat-dense secureworks-mat-no-subscript flex-auto lg:ml-0 w-full px-5">
+                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Search user'" />
               </mat-form-field>
             </div>
             <!-- Add user button -->
-            <button
-              class="ml-4"
-              mat-flat-button
-              [color]="'primary'"
-              (click)="createUser()"
-            >
-              <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-              <span class="mx-1 text-lg">Add</span>
+            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createUser()">
+              <mat-icon [svgIcon]="'heroicons_outline:user-add'"></mat-icon>
+              <span class="text-lg mx-3">New</span>
             </button>
           </div>
 
           <!-- Users list -->
-          <div class="relative">
+          <div class="relative mt-8">
             <ng-container *ngIf="users$ | async as users">
               <ng-container *ngIf="users.length; else noUsers">
                 <ng-container *ngFor="let user of users; let i = index">
                   <!-- Group -->
-                  <ng-container (click)="onBackdropClicked()"
-                    *ngIf="
+                  <ng-container (click)="onBackdropClicked()" *ngIf="
                       i === 0 ||
                       user.name.charAt(0) !== users[i - 1].name.charAt(0)
-                    "
-                  >
-                    <div
-                      class="
+                    ">
+                    <div class="
                         z-10
                         sticky
                         top-0
@@ -122,15 +69,13 @@
                         text-secondary
                         bg-gray-50
                         dark:bg-gray-900
-                      "
-                    >
+                      ">
                       {{ user.name.charAt(0) }}
                     </div>
                   </ng-container>
 
                   <!-- User -->
-                  <a
-                    class="
+                  <a class="
                       z-20
                       flex
                       items-center
@@ -139,17 +84,13 @@
                       md:px-8
                       cursor-pointer
                       border-b
-                    "
-                    [ngClass]="{
+                    " [ngClass]="{
                       'hover:bg-gray-100 dark:hover:bg-hover':
                         !selectedUser || selectedUser.id !== user.id,
                       'bg-primary-50 dark:bg-hover':
                         selectedUser && selectedUser.id === user.id
-                    }"
-                    [routerLink]="['./', user.id]"
-                  >
-                    <div
-                      class="
+                    }" [routerLink]="['./', user.id]">
+                    <div class="
                         flex flex-0
                         items-center
                         justify-center
@@ -158,11 +99,9 @@
                         ml-5
                         rounded-full
                         overflow-hidden
-                      "
-                    >
+                      ">
                       <ng-container>
-                        <div
-                          class="
+                        <div class="
                             flex
                             items-center
                             justify-center
@@ -174,8 +113,7 @@
                             bg-gray-200
                             text-gray-600
                             dark:bg-gray-700 dark:text-gray-200
-                          "
-                        >
+                          ">
                           {{ user.name.charAt(0) }}
                         </div>
                       </ng-container>
@@ -186,7 +124,8 @@
                         {{ user.name }}
                       </div>
                       <div class="leading-5 truncate text-secondary">
-                        {{ user.age }} / {{ user.weight }}
+                        {{ user.age }} yo / {{ user.weight }} lbs / {{user.friends.length}} {{user.friends.length |
+                        i18nPlural : {'=0': 'friends','=1': 'friend', other: 'friends'} }}
                       </div>
                     </div>
                   </a>
@@ -196,8 +135,7 @@
 
             <!-- No contacts -->
             <ng-template #noUsers>
-              <div
-                class="
+              <div class="
                   p-8
                   sm:p-16
                   border-t
@@ -205,8 +143,7 @@
                   font-semibold
                   tracking-tight
                   text-center
-                "
-              >
+                ">
                 There are no users!
               </div>
             </ng-template>

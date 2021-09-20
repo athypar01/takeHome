@@ -55,7 +55,6 @@
 .mat-flat-button,
 .mat-raised-button,
 .mat-stroked-button {
-
   padding: 0 20px !important;
   border-radius: 9999px !important;
 }
@@ -325,11 +324,6 @@
             margin: 0 !important;
           }
         }
-
-        // /* Datepicker default icon size */
-        // .mat-datepicker-toggle-default-icon {
-        //   @apply icon-size-6;
-        // }
 
         /* Make mat-select usable as prefix and suffix */
         .mat-select {
@@ -731,4 +725,14 @@
       }
     }
   }
+}
+
+
+/* Text alignment */
+.right-align {
+  text-align: right!important;
+}
+
+.mat-option-text {
+  font-family: "Inter", sans-serif!important;
 }

@@ -117,7 +117,7 @@ export class UserListMockApi {
       .reply(({ request }) => {
         // Get the id and contact
         const id = request.body.id;
-        const userList = cloneDeep(request.body.userList);
+        const userList = cloneDeep(request.body.user);
 
         // Prepare the updated contact
         let updatedUser = null;

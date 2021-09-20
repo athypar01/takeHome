@@ -54,8 +54,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTableModule,
     MatTooltipModule,
     MatDialogModule,
-    StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
-    EffectsModule.forFeature([UsersEffects]),
+    // StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
+    // EffectsModule.forFeature([UsersEffects]),
   ],
 })
 export class UserModule {}

@@ -10,6 +10,7 @@ import { User } from './user.types';
 export class UserService {
   private _user: BehaviorSubject<User | any> = new BehaviorSubject(null);
   private _users: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
+  private _friends: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
 
   /**
    * Constructor
@@ -28,11 +29,20 @@ export class UserService {
   }
 
   /**
+ * Getter for friends of selected user
+ */
+  get friend$(): Observable<User[]> {
+    return this._friends.asObservable();
+  }
+
+
+  /**
    * Getter for user list
    */
   get users$(): Observable<User[]> {
     return this._users.asObservable();
   }
+
 
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
@@ -75,9 +85,20 @@ export class UserService {
       map((users) => {
         // Find the user
         const user = users.find((item: User) => item.id === id);
+        const friends: User[] = [];
+        user.friends.forEach((friend: User) => {
+          users.forEach((userId: User) => {
+            if (friend.id === userId.id) {
+              friends.push(userId)
+            }
+          })
+        })
 
         // Update the user
         this._user.next(user);
+
+        // Update the friends
+        this._friends.next(friends);
 
         // Return the user
         return user;
@@ -132,9 +153,11 @@ export class UserService {
             map((updatedUser) => {
               // Find the index of the updated contact
               const index = users.findIndex((item) => item.id === id);
+              console.log(index)
 
               // Update the contact
-              users[index] = updatedUser;
+              // users[index] = updatedUser;
+              Object.assign(users[index], updatedUser)
 
               // Update the users
               this._users.next(users);

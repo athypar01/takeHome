@@ -57,17 +57,8 @@ export class ListComponent implements OnInit {
     this._userService.user$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((user: User) => {
-        console.log(user)
         // Update the selected user
         this.selectedUser = user;
-        if (user !== undefined  || user !== null) {
-          this.matDrawer.open();
-          this._changeDetectorRef.markForCheck();
-        } else {
-          this.matDrawer.close();
-          this._changeDetectorRef.markForCheck();
-        }
-
         // Mark for check
         this._changeDetectorRef.markForCheck();
       });
@@ -127,6 +118,7 @@ export class ListComponent implements OnInit {
   createUser(): void {
     // Create the contact
     this._userService.createUser().subscribe((newUser) => {
+      console.log(newUser.id)
       // Go to the new contact
       this._router.navigate(['./', newUser.id], {
         relativeTo: this._activatedRoute,

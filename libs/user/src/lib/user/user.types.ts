@@ -3,9 +3,6 @@ export interface User {
   name: string;
   age: string;
   weight: string;
-  friends: Friend[];
+  friends: User[];
 }
 
-export interface Friend {
-  id: string;
-}

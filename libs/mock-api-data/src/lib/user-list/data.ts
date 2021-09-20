@@ -5,7 +5,8 @@ export const userList = [
     age: '25',
     weight: '120',
     friends: [
-
+      {id: '9d3f0e7f-dcbd-4e56-a5e8-87b8154e9edf'},
+      {id: 'f4ad15d9-5a24-463a-88ea-6189d6bb3a53'}
     ]
   },
   {

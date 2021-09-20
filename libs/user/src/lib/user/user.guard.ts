@@ -23,10 +23,10 @@ export class UserGuard implements CanDeactivate<DetailsComponent> {
       nextRoute = nextRoute.firstChild;
     }
 
-    // If the next state doesn't contain '/contacts'
+    // If the next state doesn't contain '/user'
     // it means we are navigating away from the
-    // contacts app
-    if (!nextState.url.includes('/contacts')) {
+    // user app
+    if (!nextState.url.includes('/user')) {
       // Let it navigate
       return true;
     }

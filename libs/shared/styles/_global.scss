@@ -2,74 +2,20 @@
 @import './theme/overrides';
 @import './theme/pallete';
 
-/* Adapted from https://tailwindcss.com/docs/functions-and-directives */
 
-/* This injects Tailwind's base styles and and any component classes registered by plugins.*/
-@tailwind base;
-
-/* This injects additional styles into Tailwind's base styles layer. */
-@layer base {
-  * {
-    /* Text rendering */
-    text-rendering: optimizeLegibility;
-    -o-text-rendering: optimizeLegibility;
-    -ms-text-rendering: optimizeLegibility;
-    -moz-text-rendering: optimizeLegibility;
-    -webkit-text-rendering: optimizeLegibility;
-    -webkit-tap-highlight-color: transparent;
-
-    /* Remove the focus ring */
-    &:focus {
-      outline: none !important;
-    }
-  }
-
-  /* HTML and Body default styles */
-  html,
-  body {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    width: 100%;
-    min-height: 100%;
-    -webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
-  }
-
-  /* Font size */
-  html {
-    font-size: 16px;
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.875rem;
-  }
-
-  /* Better spacing and border for horizontal rule */
-  hr {
-    margin: 32px 0;
-    border-bottom-width: 1px;
-  }
-
-  /* Disabled placeholder color is too faded on Safari */
-  input[disabled] {
-    opacity: 1;
-    -webkit-text-fill-color: currentColor;
-  }
-
-  /* Print styles */
-  @media print {
-    /* Make the base font size smaller for print so everything is scaled nicely */
-    html {
-      font-size: 12px !important;
-    }
-
-    body {
-      background: none !important;
-    }
-  }
+.example-additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
 }
 
-/* This injects Tailwind's component classes and any component classes registered by plugins. */
-@tailwind components;
+span {
+  margin: 0 2px;
+}
+
+span:first-of-type {
+  margin-left: 0;
+}
+
+span:last-of-type {
+  margin-right: 0;
+}
