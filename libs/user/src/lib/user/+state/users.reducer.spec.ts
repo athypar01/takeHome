@@ -1,13 +1,17 @@
 import { Action } from '@ngrx/store';
+import { FriendsAppStateInterface } from '../shared/user-state.interface';
 
+import { User } from '../shared/users.interface';
 import * as UsersActions from './users.actions';
-import { UsersEntity } from './users.models';
-import { State, initialState, reducer } from './users.reducer';
+import { initialState, reducer } from './users.reducer';
 
 describe('Users Reducer', () => {
-  const createUsersEntity = (id: string, name = ''): UsersEntity => ({
+  const createUsersEntity = (id: string, name = '', age = '', weight = '', friends= []): User => ({
     id,
-    name: name || `name-${id}`,
+    name,
+    age,
+    weight,
+    friends
   });
 
   describe('valid Users actions', () => {
@@ -16,9 +20,9 @@ describe('Users Reducer', () => {
         createUsersEntity('PRODUCT-AAA'),
         createUsersEntity('PRODUCT-zzz'),
       ];
-      const action = UsersActions.loadUsersSuccess({ users });
+      const action = UsersActions.loadUsersAPISuccessAction({ users });
 
-      const result: State = reducer(initialState, action);
+      const result: FriendsAppStateInterface = reducer(initialState, action);
 
       expect(result.loaded).toBe(true);
       expect(result.ids.length).toBe(2);

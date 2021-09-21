@@ -18,18 +18,25 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { UsersEffects } from './+state/users.effects';
 
 import { ConfirmationService } from '@secureworks/confirmation';
+import { reducer, USERS_FEATURE_KEY } from './+state/users.reducer';
 import { UserComponent } from './user.component';
 import { DetailsComponent } from './details/details.component';
 import { ListComponent } from './list/list.component';
 import { userRoutes } from './user.routing';
+import { ChartsComponent } from '../charts/charts.component';
+
 
 @NgModule({
   declarations: [
     UserComponent,
     DetailsComponent,
-    ListComponent
+    ListComponent,
+    ChartsComponent
   ],
   imports: [
     RouterModule.forChild(userRoutes),
@@ -52,9 +59,8 @@ import { userRoutes } from './user.routing';
     MatTableModule,
     MatTooltipModule,
     MatDialogModule,
-
-    // StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
-    // EffectsModule.forFeature([UsersEffects]),
+    StoreModule.forFeature(USERS_FEATURE_KEY, reducer),
+    EffectsModule.forFeature([UsersEffects]),
   ],
   providers: [
     ConfirmationService,

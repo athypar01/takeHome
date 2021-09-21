@@ -29,10 +29,10 @@ describe('UsersEffects', () => {
 
   describe('init$', () => {
     it('should work', () => {
-      actions = hot('-a-|', { a: UsersActions.init() });
+      actions = hot('-a-|', { a: UsersActions.userPageInitAction() });
 
       const expected = hot('-a-|', {
-        a: UsersActions.loadUsersSuccess({ users: [] }),
+        a: UsersActions.loadUsersAPISuccessAction({ users: [] }),
       });
 
       expect(effects.init$).toBeObservable(expected);

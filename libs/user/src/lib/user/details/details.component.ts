@@ -78,7 +78,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.friends = friends;
 
 
-        if (this.friends.length > 0) {
+        if (this.friends && this.friends.length > 0) {
           // Iterate through them
           const name: string[] = [];
           const user: User[] = [];

@@ -97,7 +97,7 @@ export class UserListMockApi {
       // Generate a new contact
       const newUser = {
         id: uuid(),
-        name: null,
+        name: 'New User',
         age: null,
         weight: null,
         friends: [],

@@ -5,7 +5,7 @@ import {
   ActivatedRouteSnapshot,
   Router
 } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { User } from './user.types';
@@ -63,21 +63,25 @@ export class UserByIdResolver implements Resolve<any> {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<User> {
-    return this._userService.getUserById(route.paramMap.get('id')).pipe(
-      // Error here means the requested contact is not available
-      catchError((error) => {
-        // Log the error
-        console.error(error);
+    if (route.paramMap.get('id') !== '0') {
+      return this._userService.getUserById(route.paramMap.get('id')).pipe(
+        // Error here means the requested contact is not available
+        catchError((error) => {
+          // Log the error
+          console.error(error);
 
-        // Get the parent url
-        const parentUrl = state.url.split('/').slice(0, -1).join('/');
+          // Get the parent url
+          const parentUrl = state.url.split('/').slice(0, -1).join('/');
 
-        // Navigate to there
-        this._router.navigateByUrl(parentUrl);
+          // Navigate to there
+          this._router.navigateByUrl(parentUrl);
 
-        // Throw an error
-        return throwError(error);
-      })
-    );
-  }
+          // Throw an error
+          return throwError(error);
+        })
+      );
+    } else {
+      return of(new User())
+    }}
+
 }
