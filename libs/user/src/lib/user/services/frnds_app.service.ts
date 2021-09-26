@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { getAllUsers } from '../+state/selectors/frnds_app.selectors';
+import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 
@@ -38,8 +38,8 @@ export class FrndsAppService {
   /**
  * Getter for user
  */
-  get user$(): Observable<User> {
-    return this._user.asObservable();
+  get user$(): Observable<any> {
+    return this.store.select(getSelectedUser);
   }
 
   /**
@@ -89,7 +89,6 @@ export class FrndsAppService {
       return this.users$?.pipe(
         take(1),
         map((users) => {
-          console.log(users)
           // Find the user
           const user = users.find((item: User) => item.id === id);
           const friends: User[] = [];
@@ -151,6 +150,7 @@ export class FrndsAppService {
    * @param user
    */
   updateContact(id: string, user: User): Observable<User> {
+    this.user$.subscribe(x => console.log(x))
     return this.users$.pipe(
       take(1),
       switchMap((users) =>
@@ -166,7 +166,7 @@ export class FrndsAppService {
               console.log(index)
 
               // Update the contact
-              Object.assign(users[index], updatedUser)
+              users[index] = updatedUser;
 
               // Update the users
               this._users.next(users);
