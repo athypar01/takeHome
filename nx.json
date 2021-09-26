@@ -62,7 +62,7 @@
     "shared-styles": {
       "tags": ["scope:shared", "type:styles"]
     },
-    "user": {
+    "frnds-app": {
       "tags": []
     }
   }

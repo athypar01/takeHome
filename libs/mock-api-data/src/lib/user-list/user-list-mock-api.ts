@@ -1,3 +1,4 @@
+import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds-app-state.interface';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, cloneDeep } from 'lodash-es';
 import { v4 as uuid } from 'uuid';
@@ -10,6 +11,7 @@ import { userList as userData } from './data';
   providedIn: 'root',
 })
 export class UserListMockApi {
+  response: MockApiResponse = new MockApiResponse();
   private _userList: any[] = userData;
 
   /**
@@ -31,16 +33,22 @@ export class UserListMockApi {
     // -----------------------------------------------------------------------------------------------------
     // @ User - GET
     // -----------------------------------------------------------------------------------------------------
-    this._mockApiService.onGet('api/user/all').reply(() => {
-      // Clone the user list
-      const userList = cloneDeep(this._userList);
+    this._mockApiService
+      .onGet('api/user/all')
+      .reply(() => {
+        // Clone the user list
+        const userList = cloneDeep(this._userList);
 
-      // Sort the contacts by the name field by default
-      userList.sort((a, b) => a.name.localeCompare(b.name));
+        // Sort the contacts by the name field by default
+        userList.sort((a, b) => a.name.localeCompare(b.name));
 
-      // Return the response
-      return [200, userList];
-    });
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = userList;
+
+        // Return the response
+        return [200, this.response];
+      });
 
     // -----------------------------------------------------------------------------------------------------
     // @ User Search - GET
@@ -67,8 +75,13 @@ export class UserListMockApi {
         // Sort the contacts by the name field by default
         users.sort((a, b) => a.name.localeCompare(b.name));
 
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = users;
+
+
         // Return the response
-        return [200, users];
+        return [200, this.response];
       });
 
     // -----------------------------------------------------------------------------------------------------

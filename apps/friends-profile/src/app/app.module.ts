@@ -12,7 +12,7 @@ import { MockApiRequestsModule } from '@secureworks/mockApiRequests';
 import { mockApiDataServices } from '@secureworks/apiMockData';
 import { IconsShareableModule } from '@secureworks/icons';
 import { environment } from '@secureworks/shared/environments';
-import { UserModule } from '@secureworks/user';
+import { FrndsAppModule } from '@secureworks/frnds-app';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 
@@ -26,7 +26,7 @@ import { AppRoutingModule } from './app.routing';
     HttpClientModule,
     MockApiRequestsModule.forRoot(mockApiDataServices),
     IconsShareableModule.forRoot(),
-    UserModule,
+    FrndsAppModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

@@ -31,7 +31,7 @@
         "libs/shared/environments/src/index.ts"
       ],
       "@secureworks/shared/styles": ["libs/shared/styles/src/index.ts"],
-      "@secureworks/user": ["libs/user/src/index.ts"]
+      "@secureworks/frnds-app": ["libs/user/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
