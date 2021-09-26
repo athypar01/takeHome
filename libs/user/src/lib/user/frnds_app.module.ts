@@ -31,6 +31,7 @@ import { FrndsAppInitEffects } from './+state/effects/frnds_init.effects';
 import { FRNDS_APP_FEATURE_KEY, initReducer } from './+state/reducers/frnds_app_init.reducer';
 import { FrndsQueryEffects } from './+state/effects/frnds-query.effects';
 import { FrndsNewUserEffects } from './+state/effects/frnds-newuser.effects';
+import { FrndsAppSelectUserEffects } from './+state/effects/frnds-selectuser.effects';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { FrndsNewUserEffects } from './+state/effects/frnds-newuser.effects';
     EffectsModule.forFeature([
       FrndsAppInitEffects,
       FrndsQueryEffects,
-      FrndsNewUserEffects
+      FrndsNewUserEffects,
+      FrndsAppSelectUserEffects
     ]),
   ],
   providers: [

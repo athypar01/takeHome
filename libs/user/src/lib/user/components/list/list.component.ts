@@ -111,6 +111,7 @@ export class ListComponent implements OnInit {
  */
   createUser(): void {
     this.store.dispatch(frndsAppNewUserClickAction());
+    this.validateID();
   }
 
   /**
@@ -131,7 +132,6 @@ export class ListComponent implements OnInit {
         this.openStatus = true;
       } else {
         this.openStatus = false;
-        this._router.navigate(['../'], { relativeTo: this._activatedRoute });
       }
     });
   }

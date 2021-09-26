@@ -25,7 +25,7 @@ export class FrndsAppSelectUserEffects {
       ofType(frndsAppSelectUserClickAction),
       switchMap(({ query }) => {
         return this._frndsAppService.getUserById(query).pipe(
-          map((user: User) => {
+          map((user: User | null) => {
             return frndsAppSelectUserCreateActionSuccess({ user })
           }),
 
@@ -44,7 +44,7 @@ export class FrndsAppSelectUserEffects {
       return this.actions$.pipe(
         ofType(frndsAppSelectUserClickAction),
         tap((query) => {
-          this._router.navigate(['../', 'frnds-app', query], {relativeTo:this._activatedRoute})
+          this._router.navigate(['../', 'frnds-app', query.query], {relativeTo:this._activatedRoute})
         })
       )
     },

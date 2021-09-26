@@ -11,7 +11,7 @@ export const frndsAppSelectUserClickAction = createAction(
 
 export const frndsAppSelectUserCreateActionSuccess = createAction(
   FrndsAppSelectUserActionTypes.FRNDS_SELECT_USER_SUCCESS,
-  props<{ user: User }>()
+  props<{ user: User | null}>()
 );
 
 export const frndsAppSelectUserCreateActionFailure = createAction(
