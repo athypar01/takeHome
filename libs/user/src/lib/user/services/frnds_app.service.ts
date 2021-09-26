@@ -163,7 +163,6 @@ export class FrndsAppService {
             map((updatedUser) => {
               // Find the index of the updated contact
               const index = users.findIndex((item) => item.id === id);
-              console.log(index)
 
               // Update the contact
               users[index] = updatedUser;
