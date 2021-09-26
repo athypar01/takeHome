@@ -5,6 +5,7 @@ import { FrndsAppStateInterface, User } from '../../types/frnds-app-state.interf
 import * as frndsAppInitActions from '../actions/frnds_init.actions';
 import * as frndsAppQueryActions from '../actions/frnds-query.actions';
 import * as frndsAppNewUserActions from '../actions/frnds_new_user.actions';
+import * as frndsAppSelectUserActions from '../actions/frnds_select_user.actions';
 
 export const FRNDS_APP_FEATURE_KEY = 'friends-app';
 
@@ -50,11 +51,23 @@ const frndsAppInitReducer = createReducer(
   })),
 
   on(frndsAppNewUserActions.frndsAppNewUserClickAction, (state): FrndsAppStateInterface => ({
-    ...state, isNew: true, loaded: false, queryParam: 'new', selectedId: 'new', editToggleStatus: false
+    ...state, isNew: true, loaded: false, queryParam: 'new', selectedId: 'new', editToggleStatus: true
   })),
 
   on(frndsAppNewUserActions.frndsAppNewUserCreateAction, (state): FrndsAppStateInterface => ({
-    ...state
+    ...state, isSubmitting: true
+  })),
+
+  on(frndsAppNewUserActions.frndsAppNewUserCreateActionSuccess, (state, { users }): FrndsAppStateInterface =>
+    frndsAppAdapter.setAll(users, { ...state, isNew: false, loaded: true, queryParam: null, selectedId: null, editToggleStatus: false, isSubmitting: false})
+  ),
+
+  on(frndsAppNewUserActions.frndsAppNewUserCreateActionFailure, (state,{ error }): FrndsAppStateInterface => ({
+    ...state, error, isSubmitting: false
+  })),
+
+  on(frndsAppSelectUserActions.frndsAppSelectUserClickAction, (state, {query}): FrndsAppStateInterface => ({
+    ...state, isNew: false, loaded: false, queryParam: query, selectedId: query, editToggleStatus: false
   })),
 
 );

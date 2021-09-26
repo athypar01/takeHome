@@ -33,7 +33,6 @@ export class FrndsNewUserEffects {
     { dispatch: false }
   )
 
-
   // newUser$ = createEffect(() => {
   //   return this.actions$.pipe(
   //     ofType(frndsAppQueryAction),
