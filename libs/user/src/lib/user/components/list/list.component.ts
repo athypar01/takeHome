@@ -8,9 +8,8 @@ import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
 import { User } from './../../types/frnds-app-state.interface';
-import { FrndsAppService } from '../../services/frnds_app.service';
 import { frndsAppInitAction } from './../../+state/actions/frnds_init.actions';
-import { getAllUsers, getSelectedId, isUsersLoaded } from '../../+state/selectors/frnds_app.selectors';
+import { getAllUsers, getSelectedId } from '../../+state/selectors/frnds_app.selectors';
 import { frndsAppQueryAction } from '../../+state/actions/frnds-query.actions';
 import { frndsAppNewUserClickAction } from '../../+state/actions/frnds_new_user.actions';
 import { frndsAppSelectUserClickAction } from '../../+state/actions/frnds_select_user.actions';
@@ -27,7 +26,6 @@ export class ListComponent implements OnInit {
   @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
   drawerMode: 'side' | 'over' = 'side';
 
-  isUsersLoaded$: Observable<boolean | null>;
   isUserSelected$: Observable<string | null | undefined>;
   users$: Observable<User[] | null>;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -91,9 +89,8 @@ export class ListComponent implements OnInit {
   // -----------------------------------------------------------------------------------------------------
 
   initializeValues() {
-    this.isUsersLoaded$ = this.store.select(isUsersLoaded);
     this.users$ = this.store.select(getAllUsers);
-    this.validateID();
+    this.validateSelection();
   }
 
   /**
@@ -111,7 +108,7 @@ export class ListComponent implements OnInit {
  */
   createUser(): void {
     this.store.dispatch(frndsAppNewUserClickAction());
-    this.validateID();
+    this.validateSelection();
   }
 
   /**
@@ -119,15 +116,17 @@ export class ListComponent implements OnInit {
  */
   selectUser(currentId: string): void {
     this.store.dispatch(frndsAppSelectUserClickAction({ query: currentId }));
-    this.validateID();
+    this.validateSelection();
   }
 
   /**
  * Navigate to view depending on user selection
  */
-  validateID(): void {
+  validateSelection(): void {
     this.isUserSelected$ = this.store.select(getSelectedId);
     this.isUserSelected$.subscribe((currentId: string | null | undefined) => {
+      // Open the drawer if user is selected or a new user is created
+      // Close drawer if in list view
       if (currentId !== null && currentId !== undefined) {
         this.openStatus = true;
       } else {
