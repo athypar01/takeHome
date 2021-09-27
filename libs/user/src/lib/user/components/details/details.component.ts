@@ -106,9 +106,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
-/**
- * Form control for the friends' name
- */
+  /**
+   * Form control for the friends' name
+   */
   get friendsFormControl() {
     return this.userForm.get('friendsNameList') as FormControl;
   }
@@ -172,17 +172,41 @@ export class DetailsComponent implements OnInit, OnDestroy {
   /**
  * Update the user and user contacts
  */
-  updateUser(): void {
+
+  createUser(): void {
     // Get the contact object
     const userData = this.userForm.value;
 
     // Update the contact on the server
-    this._frndsAppService.updateContact(userData.id, userData).pipe(debounceTime(300)).subscribe(() => {
+    this._frndsAppService.createUser(userData).pipe(debounceTime(300)).subscribe(() => {
       this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
       // Toggle the edit mode off
       this.toggleEditMode(false);
     });
+  }
+
+  updateUser(): void {
+    // Get the contact object
+    const userData = this.userForm.value;
+
+    // Update the contact on the server
+    if (this.user.id) {
+      this._frndsAppService.updateContact(userData.id, userData).pipe(debounceTime(300)).subscribe(() => {
+        this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
+
+        // Toggle the edit mode off
+        this.toggleEditMode(false);
+      });
+    } else {
+      this._frndsAppService.createUser(userData).pipe(debounceTime(300)).subscribe(() => {
+        this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
+
+        // Toggle the edit mode off
+        this.toggleEditMode(false);
+      });
+    }
+
   }
 
   /**

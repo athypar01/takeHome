@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
+import { v4 as uuid } from 'uuid';
 
+import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 
 @Injectable({
@@ -126,11 +127,13 @@ export class FrndsAppService {
   /**
    * Create user
    */
-  createUser(): Observable<User> {
+  createUser(data: User): Observable<User> {
+    console.log(data)
+    data.id = uuid();
     return this.users$.pipe(
       take(1),
       switchMap((userList) =>
-        this._httpClient.post<User>('api/user/contact', {}).pipe(
+        this._httpClient.post<User>('api/user/contact', data).pipe(
           map((newUser) => {
             // Update the user list with the new user
             this._users.next([newUser, ...userList]);
@@ -150,7 +153,6 @@ export class FrndsAppService {
    * @param user
    */
   updateContact(id: string, user: User): Observable<User> {
-    this.user$.subscribe(x => console.log(x))
     return this.users$.pipe(
       take(1),
       switchMap((users) =>

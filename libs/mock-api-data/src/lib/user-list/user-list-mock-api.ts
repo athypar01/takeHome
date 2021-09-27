@@ -1,7 +1,6 @@
 import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds-app-state.interface';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, cloneDeep } from 'lodash-es';
-import { v4 as uuid } from 'uuid';
 import { Injectable } from '@angular/core';
 
 import { MockApiRequestsService } from '@secureworks/mockApiRequests';
@@ -106,15 +105,9 @@ export class UserListMockApi {
     // -----------------------------------------------------------------------------------------------------
     // @ User - POST
     // -----------------------------------------------------------------------------------------------------
-    this._mockApiService.onPost('api/user/contact').reply(() => {
+    this._mockApiService.onPost('api/user/contact').reply(({request}) => {
       // Generate a new contact
-      const newUser = {
-        id: uuid(),
-        name: 'New User',
-        age: null,
-        weight: null,
-        friends: [],
-      };
+      const newUser = request.body
 
       // Unshift the new contact
       this._userList.unshift(newUser);
