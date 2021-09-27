@@ -40,6 +40,7 @@ export interface Update<T> {
 }
 
 export interface FrndsAppStateInterface extends EntityState<User> {
+  validationErrors: any;
   editToggleStatus: boolean | null;
   isSubmitting: boolean | null;
   isNew:boolean | null;

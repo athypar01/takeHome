@@ -20,7 +20,8 @@ export const initialState: FrndsAppStateInterface = frndsAppAdapter.getInitialSt
   editToggleStatus: false,
   isSubmitting: false,
   queryParam: null,
-  isNew: null
+  isNew: null,
+  validationErrors: null
 });
 
 const frndsAppInitReducer = createReducer(
