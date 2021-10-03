@@ -1,6 +1,6 @@
 <div class="flex flex-col w-full">
 
-  <ng-container *ngIf="!editMode">
+  <ng-container *ngIf="(editMode$ | async)!== true">
     <!-- Header -->
     <div class="relative w-full h-40 sm:h-48 px-8 sm:px-12 bg-accent-100 dark:bg-accent-700">
       <!-- Background -->
@@ -28,7 +28,7 @@
 
           <!-- Actions -->
           <div class="flex items-center ml-auto mb-1">
-            <button mat-stroked-button color="primary" (click)="toggleEditMode(true)">
+            <button mat-stroked-button color="primary" (click)="toggleEditMode(user.id, user)">
               <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
               <span class="ml-2">Edit</span>
             </button>
@@ -88,7 +88,7 @@
           <!-- Chart -->
           <ng-container>
             <div class="relative">
-              <charts></charts>
+              <charts [enablePolylines]="true" [isPercentage]="true" [pieData]="data"></charts>
             </div>
           </ng-container>
 
@@ -99,7 +99,7 @@
 
   </ng-container>
 
-  <ng-container *ngIf="editMode">
+  <ng-container *ngIf="(editMode$ | async)=== true">
     <!-- Header -->
     <div class="relative w-full h-40 sm:h-48 px-8 sm:px-12 bg-accent-100 dark:bg-accent-700">
       <!-- Background -->
@@ -223,7 +223,7 @@
             </button>
 
             <!-- Cancel -->
-            <button class="mx-3" [color]="'accent'" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(false)">
+            <button class="mx-3" [color]="'accent'" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(user.id, user)">
               Cancel
             </button>
 

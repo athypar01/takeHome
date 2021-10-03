@@ -36,7 +36,7 @@ const frndsAppInitReducer = createReducer(
   ),
 
   on(frndsAppInitActions.frndsAppInitFailureAction, (state, { error }): FrndsAppStateInterface => ({
-     ...state, error
+    ...state, error
   })),
 
   on(frndsAppQueryActions.frndsAppQueryAction, (state, action): FrndsAppStateInterface => ({
@@ -44,7 +44,7 @@ const frndsAppInitReducer = createReducer(
   })),
 
   on(frndsAppQueryActions.frndsAppQueryActionSuccess, (state, { users }): FrndsAppStateInterface =>
-    frndsAppAdapter.setAll(users, { ...state, loaded: true})
+    frndsAppAdapter.setAll(users, { ...state, loaded: true })
   ),
 
   on(frndsAppQueryActions.frndsAppQueryActionFailure, (state, { error }): FrndsAppStateInterface => ({
@@ -59,18 +59,29 @@ const frndsAppInitReducer = createReducer(
     ...state, isSubmitting: true
   })),
 
-  on(frndsAppNewUserActions.frndsAppNewUserCreateActionSuccess, (state, { users }): FrndsAppStateInterface =>
-    frndsAppAdapter.setAll(users, { ...state, isNew: false, loaded: true, queryParam: null, selectedId: null, editToggleStatus: false, isSubmitting: false})
+  on(frndsAppNewUserActions.addNewUserSuccessAction, (state, { users }): FrndsAppStateInterface =>
+    frndsAppAdapter.setAll(users, { ...state, isNew: false, loaded: true, queryParam: null, selectedId: null, editToggleStatus: false, isSubmitting: false })
   ),
 
-  on(frndsAppNewUserActions.frndsAppNewUserCreateActionFailure, (state,{ error }): FrndsAppStateInterface => ({
+  on(frndsAppNewUserActions.addNewUserFailureAction, (state, { error }): FrndsAppStateInterface => ({
     ...state, error, isSubmitting: false
   })),
 
-  on(frndsAppSelectUserActions.frndsAppSelectUserClickAction, (state, {query}): FrndsAppStateInterface => ({
+  on(frndsAppSelectUserActions.frndsAppSelectUserClickAction, (state, { query }): FrndsAppStateInterface => ({
     ...state, isNew: false, loaded: false, queryParam: query, selectedId: query, editToggleStatus: false
   })),
 
+  on(frndsAppSelectUserActions.loadSelectedUserSuccessAction, (state, { user: user }): FrndsAppStateInterface =>
+    frndsAppAdapter.setOne(user, { ...state, isNew: false, loaded: true, queryParam: null, selectedId: null, editToggleStatus: false, isSubmitting: false })
+  ),
+
+  on(frndsAppSelectUserActions.loadSelectedUserFailureAction, (state, { error }): FrndsAppStateInterface => ({
+    ...state, error
+  })),
+
+  on(frndsAppSelectUserActions.frndsAppUpdateUserEditAction, (state, { id, user }): FrndsAppStateInterface => ({
+    ...state, isNew: false, loaded: false, queryParam: id, selectedId: id, editToggleStatus: true
+  }))
 );
 
 export function initReducer(state: FrndsAppStateInterface, action: Action) {

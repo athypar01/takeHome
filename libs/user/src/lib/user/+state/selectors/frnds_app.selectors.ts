@@ -22,7 +22,7 @@ export const getAllUsers = createSelector(
 );
 
 export const newUserInit = createSelector(
-  frndsAppFeatureSelector,  (frndsAppState: FrndsAppStateInterface) => frndsAppState.isNew
+  frndsAppFeatureSelector,  (state: FrndsAppStateInterface) => state.isNew
 )
 
 export const getSelectedId = createSelector(
@@ -37,7 +37,7 @@ export const getUsersEntities = createSelector(
 export const getSelectedUser = createSelector(
   getUsersEntities,
   getSelectedId,
-  (entities, selectedId) => (selectedId ? entities[selectedId] : undefined)
+  (entities, selectedId) => (selectedId ? entities[selectedId] : null)
 );
 
 export const isEditStatus = createSelector(

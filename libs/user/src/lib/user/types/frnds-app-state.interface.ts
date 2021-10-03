@@ -41,11 +41,12 @@ export interface Update<T> {
 
 export interface FrndsAppStateInterface extends EntityState<User> {
   validationErrors: any;
-  editToggleStatus: boolean | null;
+  editToggleStatus: boolean;
   isSubmitting: boolean | null;
   isNew:boolean | null;
   loaded: boolean | null;
   users?: User[] | null;
+  user?: User;
   error?: HttpErrorResponse | null;
   selectedId?: string | null;
   queryParam?: string | null;

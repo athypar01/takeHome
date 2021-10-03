@@ -120,7 +120,8 @@ export class FrndsAppService {
       );
     } else {
       this._user.next(null);
-      return of(null);
+      return of(null)
+      // return of(null);
     }
   }
 
@@ -128,7 +129,6 @@ export class FrndsAppService {
    * Create user
    */
   createUser(data: User): Observable<User> {
-    console.log(data)
     data.id = uuid();
     return this.users$.pipe(
       take(1),

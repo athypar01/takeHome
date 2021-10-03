@@ -2,13 +2,16 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
 import { ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from '../list/list.component';
 import { User } from '../../types/frnds-app-state.interface';
 import { FrndsAppService } from '../../services/frnds_app.service';
+import { Store } from '@ngrx/store';
+import { isEditStatus } from '../../+state/selectors/frnds_app.selectors';
+import { frndsAppUpdateUserEditAction } from '../../+state/actions/frnds_select_user.actions';
 
 
 @Component({
@@ -24,8 +27,25 @@ export class DetailsComponent implements OnInit, OnDestroy {
   users: User[];
   friends: User[] = [];
   filteredUsers: User[] = [];
-  editMode = false;
+  editMode: boolean;
+  editMode$: Observable<boolean>;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  public chartData: Array<any>;
+
+  data: SimpleDataModel[] = [
+    {
+      name: "text1",
+      value: "95"
+    },
+    {
+      name: "text1",
+      value: "4"
+    },
+    {
+      name: "text3",
+      value: "1"
+    }
+  ];
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -35,9 +55,12 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private _frndsAppService: FrndsAppService,
     private _formBuilder: FormBuilder,
     private _router: Router,
+    private _store: Store
   ) { }
 
   ngOnInit(): void {
+    this.editMode$ = this._store.select(isEditStatus).pipe(takeUntil(this._unsubscribeAll));
+
     // Open the drawer
     this._userListComponent.matDrawer?.open();
 
@@ -66,7 +89,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       .subscribe((user: User) => {
         this.user = user;
         this.userForm.patchValue(this.user);
-        this.toggleEditMode(false);
+        // this.toggleEditMode(false);
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -92,6 +115,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
         }
         this._changeDetectorRef.markForCheck();
       });
+
+      setTimeout(() => {
+        this.generateData();
+
+        // change the data periodically
+        setInterval(() => this.generateData(), 3000);
+      }, 1000);
   }
 
   /**
@@ -141,13 +171,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
  *
  * @param editMode
  */
-  toggleEditMode(editMode: boolean | null = null): void {
-    if (editMode === null) {
-      this.editMode = !this.editMode;
-    } else {
-      this.editMode = editMode;
-    }
-
+  toggleEditMode(id: any, user: any): void {
+    this._store.dispatch(frndsAppUpdateUserEditAction({id, user}));
     // Mark for check
     this._changeDetectorRef.markForCheck();
   }
@@ -182,7 +207,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
       // Toggle the edit mode off
-      this.toggleEditMode(false);
+      // this.toggleEditMode(false);
     });
   }
 
@@ -196,14 +221,14 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
         // Toggle the edit mode off
-        this.toggleEditMode(false);
+        // this.toggleEditMode(false);
       });
     } else {
       this._frndsAppService.createUser(userData).pipe(debounceTime(300)).subscribe(() => {
         this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
         // Toggle the edit mode off
-        this.toggleEditMode(false);
+        // this.toggleEditMode(false);
       });
     }
 
@@ -245,7 +270,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
           }
 
           // Toggle the edit mode off
-          this.toggleEditMode(false);
+          // this.toggleEditMode(false);
         });
 
         // Mark for check
@@ -254,4 +279,21 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  generateData() {
+    this.chartData = [];
+    for (let i = 0; i < (8 + Math.floor(Math.random() * 10)); i++) {
+      this.chartData.push([
+        `Index ${i}`,
+        Math.floor(Math.random() * 100)
+      ]);
+    }
+  }
+}
+
+
+export interface SimpleDataModel {
+  name: string;
+  value: string;
+  color?: string;
 }

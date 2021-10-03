@@ -1,14 +1,14 @@
-import { frndsAppSelectUserCreateActionFailure } from './../actions/frnds_select_user.actions';
+import { frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserSuccessAction } from './../actions/frnds_select_user.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { switchMap, catchError, map, tap } from 'rxjs/operators';
+import { switchMap, catchError, map, tap, mergeMap } from 'rxjs/operators';
 
 import { FrndsAppService } from '../../services/frnds_app.service';
 import { User } from '../../types/frnds-app-state.interface';
-import { frndsAppSelectUserClickAction, frndsAppSelectUserCreateActionSuccess } from '../actions/frnds_select_user.actions';
-import { ActivatedRoute, Router } from '@angular/router';
+import { frndsAppSelectUserClickAction, frndsAppSelectUserCreateActionFailure, frndsAppSelectUserCreateActionSuccess } from '../actions/frnds_select_user.actions';
 
 @Injectable()
 export class FrndsAppSelectUserEffects {
@@ -44,10 +44,30 @@ export class FrndsAppSelectUserEffects {
       return this.actions$.pipe(
         ofType(frndsAppSelectUserClickAction),
         tap((query) => {
-          this._router.navigate(['../', 'frnds-app', query.query], {relativeTo:this._activatedRoute})
+          this._router.navigate(['../', 'frnds-app', query.query], { relativeTo: this._activatedRoute })
         })
       )
     },
     { dispatch: false }
   )
+
+  editExistingUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(frndsAppUpdateUserEditAction),
+      mergeMap(({ id, user }) => {
+        return this._frndsAppService.updateContact(id, user).pipe(
+          map((user: User | null) => {
+            return frndsAppUpdateUserSuccessAction({ user })
+          }),
+
+          catchError((errorResponse: HttpErrorResponse) => {
+            return of(
+              frndsAppUpdateUserFailureAction({ error: errorResponse })
+            )
+          })
+        )
+      })
+    )
+  })
+
 }
