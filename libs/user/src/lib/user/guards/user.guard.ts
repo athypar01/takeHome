@@ -33,8 +33,7 @@ export class UserGuard implements CanDeactivate<DetailsComponent> {
     }
 
     // If we are navigating to another contact...
-    // console.log(nextRoute.paramMap.get('id'))
-    if (nextRoute.paramMap.get('id')) {
+    if (nextRoute.paramMap.get('id') !== null && nextRoute.paramMap.get('id') !== undefined) {
       // Just navigate
       return true;
     }

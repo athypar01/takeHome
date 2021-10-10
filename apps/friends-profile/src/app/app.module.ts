@@ -20,16 +20,16 @@ import { AppRoutingModule } from './app.routing';
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     HttpClientModule,
     MockApiRequestsModule.forRoot(mockApiDataServices),
     IconsShareableModule.forRoot(),
     FrndsAppModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    !environment.production ? StoreDevtoolsModule.instrument({ maxAge: 50 }) : []
   ],
   providers: [
     {

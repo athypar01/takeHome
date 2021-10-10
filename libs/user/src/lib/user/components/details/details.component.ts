@@ -2,17 +2,19 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { Observable, of, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { v4 as uuid } from 'uuid';
 
 import { ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from '../list/list.component';
 import { User } from '../../types/frnds-app-state.interface';
 import { FrndsAppService } from '../../services/frnds_app.service';
-import { Store } from '@ngrx/store';
-import { isEditStatus } from '../../+state/selectors/frnds_app.selectors';
-import { frndsAppUpdateUserEditAction } from '../../+state/actions/frnds_select_user.actions';
-
+import { getAllUsers, getSelectedUser, isEditStatus } from '../../+state/selectors/frnds_app.selectors';
+import { AddUser, frndsAppSelectUserClickAction, frndsAppUpdateUserEditAction, UpdateUser } from '../../+state/actions/frnds_select_user.actions';
+import { addNewUser } from '../../+state/actions/frnds_new_user.actions';
+import { deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
 
 @Component({
   selector: 'user-details',
@@ -21,17 +23,19 @@ import { frndsAppUpdateUserEditAction } from '../../+state/actions/frnds_select_
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailsComponent implements OnInit, OnDestroy {
-  user: User;
+
   selected: string;
-  userForm: FormGroup;
-  users: User[];
   friends: User[] = [];
   filteredUsers: User[] = [];
-  editMode: boolean;
-  editMode$: Observable<boolean>;
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
-  public chartData: Array<any>;
 
+  userForm: FormGroup;
+  editMode$: Observable<boolean>;
+  user$: Observable<User | null | undefined>;
+  users$: Observable<User[] | null | undefined>;
+  selectedId$: Observable<string | null | undefined>;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  public chartData: Array<any>;
   data: SimpleDataModel[] = [
     {
       name: "text1",
@@ -60,68 +64,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editMode$ = this._store.select(isEditStatus).pipe(takeUntil(this._unsubscribeAll));
-
+    this.initializeForm();
     // Open the drawer
     this._userListComponent.matDrawer?.open();
-
-    // Create the user form
-    this.userForm = this._formBuilder.group({
-      id: new FormControl(''),
-      name: new FormControl('', [Validators.required]),
-      age: new FormControl('', [Validators.required]),
-      weight: new FormControl('', [Validators.required]),
-      friendsNameList: new FormControl([], [Validators.required]),
-      friends: new FormControl([]),
-    });
-
-    // Get the user list
-    this._frndsAppService.users$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((users: User[]) => {
-        this.users = users;
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-      });
-
-    // Get the individual user
-    this._frndsAppService.user$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((user: User) => {
-        this.user = user;
-        this.userForm.patchValue(this.user);
-        // this.toggleEditMode(false);
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-      });
-
-    // Get the friend of individual user
-    this._frndsAppService.friend$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((friends: User[]) => {
-        this.friends = friends;
-
-
-        if (this.friends && this.friends.length > 0) {
-          // Iterate through them
-          const name: string[] = [];
-          const user: User[] = [];
-          this.friends.forEach((friend: User) => {
-            name.push(friend?.name);
-            user.push(friend)
-          });
-          this.userForm.get('friends')?.setValue(user);
-          this.userForm.get('friendsNameList')?.setValue(name || null);
-        }
-        this._changeDetectorRef.markForCheck();
-      });
-
-      setTimeout(() => {
-        this.generateData();
-
-        // change the data periodically
-        setInterval(() => this.generateData(), 3000);
-      }, 1000);
+    this.initializeValues();
   }
 
   /**
@@ -136,6 +82,19 @@ export class DetailsComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
+
+  initializeForm() {
+    // Create the user form
+    this.userForm = this._formBuilder.group({
+      id: new FormControl(''),
+      name: new FormControl('', [Validators.required]),
+      age: new FormControl('', [Validators.required]),
+      weight: new FormControl('', [Validators.required]),
+      friendsNameList: new FormControl([], [Validators.required]),
+      friends: new FormControl([]),
+    });
+  }
+
   /**
    * Form control for the friends' name
    */
@@ -143,19 +102,41 @@ export class DetailsComponent implements OnInit, OnDestroy {
     return this.userForm.get('friendsNameList') as FormControl;
   }
 
+  initializeValues() {
+    this.users$ = this._store.select(getAllUsers).pipe(takeUntil(this._unsubscribeAll));
+    this.user$ = this._store.select(getSelectedUser).pipe(takeUntil(this._unsubscribeAll));
+    this.user$.subscribe(res => {
+      console.log(res)
+      if (res) {
+        this.user$ = of(res);
+        this.userForm.patchValue(res);
+        this._changeDetectorRef.markForCheck();
+      } else {
+        this.userForm.reset();
+        this.user$ = of(new User());
+      }
+    });
+
+    setTimeout(() => {
+      this.generateData();
+
+      // change the data periodically
+      setInterval(() => this.generateData(), 3000);
+    }, 1000);
+  }
+
   /**
  * Compate funciton for multiselect
  */
   public objectComparisonFunction = function (option: any, value: any): boolean {
-    return option.id === value.id;
+    return option?.id === value?.id;
   }
 
   /**
- * /**
- * Hack to show to the name of friends on selections
- *
- * @param event
- */
+  * Hack to show to the name of friends on selections
+  *
+  * @param event
+  */
   onUserSelection(event: any) {
     const names: string[] = []
     event.value.forEach((x: any) => {
@@ -171,9 +152,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
  *
  * @param editMode
  */
-  toggleEditMode(id: any, user: any): void {
-    this._store.dispatch(frndsAppUpdateUserEditAction({id, user}));
-    // Mark for check
+  toggleEditMode(id: string, user: User): void {
+    this._store.dispatch(frndsAppUpdateUserEditAction({ id, user }));
     this._changeDetectorRef.markForCheck();
   }
 
@@ -202,36 +182,25 @@ export class DetailsComponent implements OnInit, OnDestroy {
     // Get the contact object
     const userData = this.userForm.value;
 
-    // Update the contact on the server
-    this._frndsAppService.createUser(userData).pipe(debounceTime(300)).subscribe(() => {
-      this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
 
-      // Toggle the edit mode off
-      // this.toggleEditMode(false);
+
+    // Update the contact on the server
+    this._frndsAppService.createUser(userData).subscribe(res => {
+      this._router.navigate(['../'], { relativeTo: this._activatedRoute });
     });
   }
 
   updateUser(): void {
     // Get the contact object
     const userData = this.userForm.value;
-
-    // Update the contact on the server
-    if (this.user.id) {
-      this._frndsAppService.updateContact(userData.id, userData).pipe(debounceTime(300)).subscribe(() => {
-        this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
-
-        // Toggle the edit mode off
-        // this.toggleEditMode(false);
-      });
+    if (userData.id && userData.id !== 'new') {
+      this._store.dispatch(new UpdateUser(userData));
     } else {
-      this._frndsAppService.createUser(userData).pipe(debounceTime(300)).subscribe(() => {
-        this._router.navigate(['../', { relativeTo: this._activatedRoute }]);
-
-        // Toggle the edit mode off
-        // this.toggleEditMode(false);
-      });
+      userData.id = uuid();
+      this._store.dispatch(addNewUser({ user: userData }));
     }
-
+    this._store.dispatch(frndsAppSelectUserClickAction({ query: userData.id }));
+    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -255,23 +224,27 @@ export class DetailsComponent implements OnInit, OnDestroy {
       // If the confirm button pressed...
       if (result === 'confirmed') {
         // Get the current user id
-        const id = this.user.id;
+        const id = this.userForm.controls.id.value;
 
-        // Delete the user
-        this._frndsAppService.deleteContact(id).subscribe((isDeleted) => {
-          // Return if the user wasn't deleted...
-          if (!isDeleted) {
-            return;
-          } else {
-            // Navigate to the parent view
-            this._router.navigate(['../'], {
-              relativeTo: this._activatedRoute,
-            });
-          }
+        this._store.dispatch(deleteExistingUser({id: id}));
 
-          // Toggle the edit mode off
-          // this.toggleEditMode(false);
-        });
+        // // Delete the user
+        // this._frndsAppService.deleteContact(id).subscribe((isDeleted) => {
+
+        //   console.log(isDeleted)
+        //   // Return if the user wasn't deleted...
+        //   if (!isDeleted) {
+        //     return;
+        //   } else {
+        //     // Navigate to the parent view
+        //     this._router.navigate(['../'], {
+        //       relativeTo: this._activatedRoute,
+        //     });
+        //   }
+
+        //   // Toggle the edit mode off
+        //   // this.toggleEditMode(false);
+        // });
 
         // Mark for check
         this._changeDetectorRef.markForCheck();

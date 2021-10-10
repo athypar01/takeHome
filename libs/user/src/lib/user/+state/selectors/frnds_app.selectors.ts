@@ -25,13 +25,13 @@ export const newUserInit = createSelector(
   frndsAppFeatureSelector,  (state: FrndsAppStateInterface) => state.isNew
 )
 
-export const getSelectedId = createSelector(
-  frndsAppFeatureSelector,  (state: FrndsAppStateInterface) => state.selectedId
-);
-
 export const getUsersEntities = createSelector(
   frndsAppFeatureSelector, (state: FrndsAppStateInterface) =>
   selectEntities(state)
+);
+
+export const getSelectedId = createSelector(
+  frndsAppFeatureSelector,  (state: FrndsAppStateInterface) => state.selectedUserId
 );
 
 export const getSelectedUser = createSelector(
@@ -43,4 +43,4 @@ export const getSelectedUser = createSelector(
 export const isEditStatus = createSelector(
   frndsAppFeatureSelector,
   (frndsAppState: FrndsAppStateInterface) => frndsAppState.editToggleStatus
-)
+);

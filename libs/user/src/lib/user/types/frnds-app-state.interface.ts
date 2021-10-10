@@ -34,9 +34,18 @@ export interface User {
   friends: User[] | null;
 }
 
-export interface Update<T> {
+export class User {
+  id = '';
+  name = '';
+  age = '';
+  weight = '';
+  friends: User[] | null = [];
+}
+
+
+export interface Update<User> {
   id: string;
-  changes: Partial<T>;
+  changes: Partial<User>;
 }
 
 export interface FrndsAppStateInterface extends EntityState<User> {
@@ -48,6 +57,6 @@ export interface FrndsAppStateInterface extends EntityState<User> {
   users?: User[] | null;
   user?: User;
   error?: HttpErrorResponse | null;
-  selectedId?: string | null;
+  selectedUserId?: string | null;
   queryParam?: string | null;
 }
