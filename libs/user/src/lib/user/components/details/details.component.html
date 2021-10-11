@@ -69,10 +69,10 @@
               <div class="min-w-0 ml-6 space-y-1" *ngIf="user.friends && user.friends.length !== 0">
                 <ng-container *ngFor="let friend of user?.friends; trackBy: trackByFn">
                   <div class="flex items-center leading-6">
-                    <div class="sm:ml-1">{{ friend?.name }},</div>
                     <div class="text-md truncate text-secondary">
+                      <span class="sm:ml-1">{{ friend?.name }},</span>
                       <span class="font-medium mx-1">{{ friend?.age }} years,</span>
-                      <span class="font-medium mx-1">{{ friend?.weight }} lbs</span>
+                      <span class="font-medium">{{ friend?.weight }} lbs</span>
                     </div>
                   </div>
                 </ng-container>
@@ -87,8 +87,8 @@
 
           <!-- Chart -->
           <ng-container>
-            <div class="relative">
-              <charts [enablePolylines]="true" [isPercentage]="true" [pieData]="data"></charts>
+            <div class="relative" *ngIf="user.friends && user.friends.length !== 0">
+              <charts [enablePolylines]="true" [isPercentage]="true" [pieData]="chartData" [username]="user.name" [frndCount]="user.friends.length"></charts>
             </div>
           </ng-container>
 
@@ -206,7 +206,7 @@
                         <span class="hidden sm:flex w-6 h-4 mr-1 overflow-hidden"></span>
                       </span>
                     </mat-select-trigger>
-                    <mat-option *ngFor="let user of users$ | async" [value]="user">{{ user?.name }}, {{ user?.age }},
+                    <mat-option *ngFor="let user of filteredUsers" [value]="user">{{ user?.name }}, {{ user?.age }},
                       {{ user?.weight }}
                     </mat-option>
                   </mat-select>
@@ -223,7 +223,7 @@
             </button>
 
             <!-- Cancel -->
-            <button class="mx-3" [color]="'accent'" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(user.id, user)">
+            <button class="mx-3" [color]="'accent'" mat-button [matTooltip]="'Cancel'" (click)="cancel()">
               Cancel
             </button>
 

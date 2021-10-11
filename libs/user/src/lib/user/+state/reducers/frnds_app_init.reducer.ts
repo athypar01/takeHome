@@ -7,6 +7,7 @@ import * as frndsAppInitActions from '../actions/frnds_init.actions';
 import * as frndsAppQueryActions from '../actions/frnds-query.actions';
 import * as frndsAppNewUserActions from '../actions/frnds_new_user.actions';
 import * as frndsAppSelectUserActions from '../actions/frnds_select_user.actions';
+import * as FrndsAppDetailActionTypes from '../actions/frnds_detail.actions';
 
 export const FRNDS_APP_FEATURE_KEY = 'friends-app';
 
@@ -103,6 +104,9 @@ const frndsAppInitReducer = createReducer(
     ...state, error, editToggleStatus: true
   })),
 
+  on(FrndsAppDetailActionTypes.clearUserSelection, (state): FrndsAppStateInterface => ({
+    ...state, queryParam: null, selectedUserId: null, editToggleStatus: false
+  }))
 );
 
 export function initReducer(state: FrndsAppStateInterface, action: frndsAppSelectUserActions.UserActionsUnion): FrndsAppStateInterface {

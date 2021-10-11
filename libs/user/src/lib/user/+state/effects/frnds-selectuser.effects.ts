@@ -11,7 +11,7 @@ import { FrndsAppService } from '../../services/frnds_app.service';
 import { User } from '../../types/frnds-app-state.interface';
 import { frndsAppSelectUserClickAction } from '../actions/frnds_select_user.actions';
 import { addNewUser, addNewUserSuccessAction } from '../actions/frnds_new_user.actions';
-import { deleteExistingUser, deleteExistingUserFailureAction, deleteExistingUserSuccessAction } from '../actions/frnds_detail.actions';
+import { clearUserSelection, deleteExistingUser, deleteExistingUserFailureAction, deleteExistingUserSuccessAction } from '../actions/frnds_detail.actions';
 
 @Injectable()
 export class FrndsAppSelectUserEffects {
@@ -48,6 +48,18 @@ export class FrndsAppSelectUserEffects {
         ofType(frndsAppSelectUserClickAction),
         tap((query) => {
           this._router.navigate(['../', 'frnds-app', query.query], { relativeTo: this._activatedRoute })
+        })
+      )
+    },
+    { dispatch: false }
+  )
+
+  redirectAfterCancel$= createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(clearUserSelection),
+        tap(() => {
+          this._router.navigate(['../', 'frnds-app'], { relativeTo: this._activatedRoute })
         })
       )
     },
@@ -91,6 +103,8 @@ export class FrndsAppSelectUserEffects {
       })
     )
   })
+
+
 
   deleteExistingUser$ = createEffect(() => {
     return this.actions$.pipe(

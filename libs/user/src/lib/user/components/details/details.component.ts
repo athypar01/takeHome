@@ -12,9 +12,9 @@ import { ListComponent } from '../list/list.component';
 import { User } from '../../types/frnds-app-state.interface';
 import { FrndsAppService } from '../../services/frnds_app.service';
 import { getAllUsers, getSelectedUser, isEditStatus } from '../../+state/selectors/frnds_app.selectors';
-import { AddUser, frndsAppSelectUserClickAction, frndsAppUpdateUserEditAction, UpdateUser } from '../../+state/actions/frnds_select_user.actions';
+import { frndsAppSelectUserClickAction, frndsAppUpdateUserEditAction, UpdateUser } from '../../+state/actions/frnds_select_user.actions';
 import { addNewUser } from '../../+state/actions/frnds_new_user.actions';
-import { deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
+import { clearUserSelection, deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
 
 @Component({
   selector: 'user-details',
@@ -36,20 +36,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   public chartData: Array<any>;
-  data: SimpleDataModel[] = [
-    {
-      name: "text1",
-      value: "95"
-    },
-    {
-      name: "text1",
-      value: "4"
-    },
-    {
-      name: "text3",
-      value: "1"
-    }
-  ];
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -106,23 +92,83 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.users$ = this._store.select(getAllUsers).pipe(takeUntil(this._unsubscribeAll));
     this.user$ = this._store.select(getSelectedUser).pipe(takeUntil(this._unsubscribeAll));
     this.user$.subscribe(res => {
-      console.log(res)
+      this.userForm.reset();
+      if (res && res.friends) {
+        this.chartData = this.generateChart(res.friends);
+      } else {
+        this.chartData = [];
+      }
       if (res) {
         this.user$ = of(res);
+        this.users$.subscribe((user) => {
+          if (user) {
+            this.filteredUsers = user.filter(res2 => res2.id !== res.id);
+          } else {
+            this.filteredUsers = [];
+          }
+        })
         this.userForm.patchValue(res);
+        if (res && res.friends) {
+          const names: string[] = [];
+          res.friends.forEach((x) => {
+            names.push(x.name);
+          })
+          this.friendsFormControl.setValue(names);
+        }
         this._changeDetectorRef.markForCheck();
       } else {
         this.userForm.reset();
         this.user$ = of(new User());
       }
     });
+    this._changeDetectorRef.markForCheck();
+  }
 
-    setTimeout(() => {
-      this.generateData();
+  generateChart(rawData: User[]) {
+    let children = 0;
+    let youth = 0;
+    let adults = 0;
+    let seniors = 0;
+    let total = 0;
 
-      // change the data periodically
-      setInterval(() => this.generateData(), 3000);
-    }, 1000);
+    rawData.forEach((user: User) => {
+      if (+user.age < 15) {
+        children++;
+      }
+
+      if (+user.age >= 15 && +user.age < 25) {
+        youth++;
+      }
+
+      if (+user.age >= 25 && +user.age < 65) {
+        adults++;
+      }
+
+      if (+user.age >= 65) {
+        seniors++;
+      }
+    })
+
+    total = children + youth + adults + seniors;
+    const friendsAgeData: SimpleDataModel[] = []
+
+    if (children / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: 'red' });
+    }
+
+    if (youth / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: 'green' });
+    }
+
+    if (adults / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: 'blue' });
+    }
+
+    if (seniors / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Seniors", value : (seniors / total * 100).toFixed(1), color: 'magenta' });
+    }
+
+    return friendsAgeData;
   }
 
   /**
@@ -157,6 +203,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this._changeDetectorRef.markForCheck();
   }
 
+  cancel() {
+    this._store.dispatch(clearUserSelection());
+  }
+
   /**
    * Close the drawer
    */
@@ -177,18 +227,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   /**
  * Update the user and user contacts
  */
-
-  createUser(): void {
-    // Get the contact object
-    const userData = this.userForm.value;
-
-
-
-    // Update the contact on the server
-    this._frndsAppService.createUser(userData).subscribe(res => {
-      this._router.navigate(['../'], { relativeTo: this._activatedRoute });
-    });
-  }
 
   updateUser(): void {
     // Get the contact object
@@ -225,42 +263,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
       if (result === 'confirmed') {
         // Get the current user id
         const id = this.userForm.controls.id.value;
-
-        this._store.dispatch(deleteExistingUser({id: id}));
-
-        // // Delete the user
-        // this._frndsAppService.deleteContact(id).subscribe((isDeleted) => {
-
-        //   console.log(isDeleted)
-        //   // Return if the user wasn't deleted...
-        //   if (!isDeleted) {
-        //     return;
-        //   } else {
-        //     // Navigate to the parent view
-        //     this._router.navigate(['../'], {
-        //       relativeTo: this._activatedRoute,
-        //     });
-        //   }
-
-        //   // Toggle the edit mode off
-        //   // this.toggleEditMode(false);
-        // });
-
+        this._store.dispatch(deleteExistingUser({ id: id }));
         // Mark for check
         this._changeDetectorRef.markForCheck();
       }
     });
-  }
-
-
-  generateData() {
-    this.chartData = [];
-    for (let i = 0; i < (8 + Math.floor(Math.random() * 10)); i++) {
-      this.chartData.push([
-        `Index ${i}`,
-        Math.floor(Math.random() * 100)
-      ]);
-    }
   }
 }
 

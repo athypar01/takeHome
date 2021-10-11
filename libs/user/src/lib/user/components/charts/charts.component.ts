@@ -1,133 +1,216 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import * as d3 from 'd3';
+import { Component, ViewEncapsulation, OnInit, Input } from '@angular/core';
+import { color } from 'd3-color';
+import { D3Service } from './data.service';
 
 @Component({
   selector: 'charts',
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ChartsComponent implements OnInit {
+  @Input('username') public username: string;
+  @Input('frndCount') public frndCount: number;
+  @Input("pieData") public pieData: SimpleDataModel[] = [];
+  @Input("textColor") public textColor = "#ffffff";
+  @Input("isPercentage") public isPercentage = false;
+  @Input("enablePolylines") public enablePolylines = false;
 
-  constructor() {
-    this.xScale = d3.scaleLinear(),
-    this.yScale = d3.scaleLinear(),
-    this.data = this.createData()
+  public chartId;
+  private svg: any;
+  private margin = 25;
+  private width = 650;
+  private height = 650;
+
+
+  // The radius of the pie chart is half the smallest side
+  private radius = Math.min(this.width, this.height) / 2 - this.margin;
+
+  private colors: any;
+  constructor(private d3: D3Service) {
+    this.chartId = this.d3.generateId(5);
   }
 
-    // inject the svg element
-    @ViewChild('chart', { static: true})
-    private chartContainer?: ElementRef;
-    private margin: { top: number, bottom: number, left: number; right: number} =  {top: 20, bottom: 30, left: 30, right: 20};
-    private readonly xScale: d3.ScaleLinear<number, number, never>;
-    private readonly yScale: d3.ScaleLinear<number, number, never>;
-    private readonly data: Array<{ x: number; y: number }>;
+  ngOnInit() {
+    this.createSvg();
+    this.createColors();
+    this.drawChart();
+  }
 
+  private createSvg(): void {
+    this.svg = this.d3.d3
+      .select("figure#pie")
+      .append("svg")
+      .attr("viewBox", `0 0 ${this.width} ${this.height}`)
+      // .attr('width', this.width)
+      //.attr('height', this.height)
+      .append("g")
+      .attr(
+        "transform",
+        "translate(" + this.width / 2 + "," + this.height / 2 + ")"
+      );
+  }
 
-    ngOnInit(): void {
-      /*
-         First create a d3 selection for the svg element
-         that we added in the .html file
-       */
-      const svg = d3.select(this.chartContainer?.nativeElement);
+  private createColors(data = this.pieData): void {
+    this.colors = this.d3.d3
+      .scaleOrdinal()
+      .domain(data.map(d => d.value.toString()))
+      .range([
+        "#6773f1",
+        "#32325d",
+        "#6162b5",
+        "#6586f6",
+        "#8b6ced",
+        "#1b1b1b",
+        "#212121"
+      ]);
+  }
 
-      /*
-          Then we append a group element inside the svg that will
-          then contain chart. We add a translation to respect the margin.
-          This margin is important because the text of the x- and y-axis
-          will go in the space it reserves.
-       */
-      const contentGroup = svg.append('g')
-        .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
+  private drawChart(data = this.pieData): void {
+    // Compute the position of each group on the pie
+    const pie = this.d3.d3.pie<any>().value((d: any) => Number(d.value));
+    const data_ready = pie(data);
 
-      /*
-          Adjust X and Y scales to the currently available
-          screen area as well as to our data.
-       */
-      this.xScale
-        // adjust to the available screen area
-        .rangeRound([0, this.innerWidth()])
-        // adjust to the range of our data
-        .domain(d3.extent<number>(this.data.map(d => d.x)) as number[]);
+    // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+    const radius = Math.min(this.width, this.height) / 2 - this.margin;
 
-      this.yScale
-        // adjust to the available screen area
-        .rangeRound([this.innerHeight(), 0])
-        // adjust to the available screen area
-        .domain([0, d3.max(this.data, (d) => d.y * 1.1) as number]);
+    const outerArc = this.d3.d3
+      .arc()
+      .innerRadius(radius * 0.9)
+      .outerRadius(radius * 0.9);
 
-      /*
-        Append X- and Y-Axis
-          x-axis:
-            The text of it will in the space that is reserved by our margin.
-            Move the axis to the bottom of the cart with a translation.
-       */
-      contentGroup.append('g')
-        .attr('id', 'x-axis')
-        .attr('transform', `translate(0,${this.innerHeight()})`)
-        .call(d3.axisBottom(this.xScale)); // bottom: text will be shown below the line
+    // The arc generator
+    const arc = this.d3.d3
+      .arc()
+      .innerRadius(radius * 0.5) // This is the size of the donut hole
+      .outerRadius(radius * 0.8);
 
-      contentGroup.append('g')
-        .attr('id', 'y-axis')
-        .call(d3.axisLeft(this.yScale)); // left: text will be shown left of the line
+    // append the svg object to the div called 'my_dataviz'
 
-      /*
-          For each data element we add a circle to our chart
-       */
-      contentGroup.selectAll('circle')
-        .data (this.data)
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    this.svg
+      .selectAll("pieces")
+      .data(data_ready)
+      .enter()
+      .append("path")
+      .attr(
+        "d",
+        this.d3.d3
+          .arc()
+          .innerRadius(0)
+          .outerRadius(this.radius)
+      )
+      .attr("fill", (d: any, i: any) => (d.data.color ? d.data.color : this.colors(i)))
+      .attr("stroke", "#121926")
+      .style("stroke-width", "1px");
+    // Now add the annotation. Use the centroid method to get the best coordinates
+    const labelLocation = this.d3.d3
+      .arc()
+      .innerRadius(50)
+      .outerRadius(this.radius);
+    let dy = 0;
+    let index = 0;
+    this.svg
+      .selectAll("pieces")
+      .data(pie(data))
+      .enter()
+      .append("text")
+      .text((d: any) => {
+        if (
+          ((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 > 5 ||
+          !this.enablePolylines
+        ) {
+          return (
+            d.data.name +
+            " (" +
+            d.data.value +
+            (this.isPercentage ? "%" : "") +
+            ")"
+          );
+        } else {
+          return null;
+        }
+      })
+      .attr("transform", (d: any) => "translate(" + labelLocation.centroid(d) + ")")
+      .style("text-anchor", "middle")
+      .style("font-size", 28)
+      .attr("fill", this.textColor);
+    if (this.enablePolylines) {
+      this.svg
+        .selectAll("allLabels")
+        .data(data_ready)
         .enter()
-        .append('circle')
-        .attr('cx', d => this.xScale(d.x))
-        .attr('cy', d => this.yScale(d.y))
-        .attr('r', 2)
-        .attr('fill', 'dimgray');
-      }
-
-    @HostListener('window:resize', ['$event'])
-    onResize(event: any) {
-      event.target.innerWidth;
-      const svg = d3.select(this.chartContainer?.nativeElement);
-
-      // adapt the scale functions to the new dimensions
-      this.xScale.rangeRound([0, this.innerWidth()]);
-      this.yScale.rangeRound([this.innerHeight(), 0]);
-
-      // the a axis needs to use the new xScale and be moved to the right place.
-      svg.select<SVGGElement>('#x-axis')
-        .transition().ease(d3.easePolyInOut).duration(500)
-        .attr('transform', `translate(0,${this.innerHeight()})`)
-        .call(d3.axisBottom(this.xScale));
-
-      // the y axis stays in place but needs to use the new yScale.
-      svg.select<SVGGElement>('#y-axis')
-        .transition().ease(d3.easePolyInOut).duration(500)
-        .call(d3.axisLeft(this.yScale));
-
-      // reposition or circles
-      svg.selectAll('circle')
-        .transition().ease(d3.easePolyInOut).duration(500)
-        .attr('cx', d => this.xScale((d as {x: number}).x))
-        .attr('cy', d => this.yScale((d as {y: number}).y));
-    }
-
-    private innerWidth(): number {
-      return this.chartContainer?.nativeElement.clientWidth
-        - this.margin.left - this.margin.right;
-    }
-
-    private innerHeight(): number {
-      return this.chartContainer?.nativeElement.clientHeight
-        - this.margin.top - this.margin.bottom;
-    }
-
-    private createData(): Array<{x: number, y: number}> {
-      const data: Array<{x: number, y: number}> = [];
-      for (let alpha = 0; alpha <= Math.PI * 8; alpha += 0.1) {
-        data.push({
-          x: alpha * 10,
-          y: Math.sin(alpha) * 50 + 60,
+        .append("text")
+        .text((d: any) => {
+          if (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 > 5) {
+            return null;
+          } else {
+            return (
+              d.data.name +
+              " (" +
+              d.data.value +
+              (this.isPercentage ? "%" : "") +
+              ")"
+            );
+          }
+        })
+        .style("font-size", "24px")
+        .attr("dy", (d: any) => {
+          if (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 > 5) {
+            return null;
+          } else {
+            let value = 0.35;
+            if (index != 0) dy = dy + 1;
+            index++;
+            value = value + dy;
+            return value.toString() + "em";
+          }
+        })
+        .attr("transform", (d: any) => {
+          if (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 > 5) {
+            return null;
+          } else {
+            const pos = outerArc.centroid(d);
+            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+            pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
+            return "translate(" + pos + ")";
+          }
+        })
+        .style("text-anchor", (d: any) => {
+          const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+          return midangle < Math.PI ? "start" : "end";
         });
-      }
-      return data;
+      index = 0;
+      let addTo = 5;
+      this.svg
+        .selectAll("allPolylines")
+        .data(data_ready)
+        .enter()
+        .append("polyline")
+        .attr("stroke", "black")
+        .style("fill", "none")
+        .attr("stroke-width", 1)
+        .attr("points", (d: any) => {
+          if (((d.endAngle - d.startAngle) / (2 * Math.PI)) * 100 > 5) {
+            return null;
+          } else {
+            const posA = arc.centroid(d); // line insertion in the slice
+            const posB = outerArc.centroid(d); // line break: we use the other arc generator that has been built only for that
+            const posC = outerArc.centroid(d); // Label position = almost the same as posB
+            const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2; // we need the angle to see if the X position will be at the extreme right or extreme left
+            posC[0] = radius * (midangle < Math.PI ? 1 : -1); // multiply by 1 or -1 to put it on the right or on the left
+            posC[0] = posC[0] + addTo;
+            posC[1] = posC[1] + addTo;
+            addTo = addTo + 10;
+            return [posA, posB, posC];
+          }
+        });
     }
+  }
+}
+
+export interface SimpleDataModel {
+  name: string;
+  value: string;
+  color?: string;
 }
