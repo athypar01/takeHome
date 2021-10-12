@@ -11,16 +11,6 @@ export interface FrndsPartialState {
   readonly [FRNDS_APP_FEATURE_KEY]: FrndsAppStateInterface;
 }
 
-export class MockApiResponse {
-  success: boolean;
-  response: MockApiResponseMainBody;
-  errors: HttpErrorResponse | null;
-}
-
-export class MockApiResponseMainBody {
-  users: User[]
-}
-
 export interface QueryUser {
   param?: string[];
 }

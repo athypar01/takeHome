@@ -1,17 +1,18 @@
-import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds-app-state.interface';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, cloneDeep } from 'lodash-es';
 import { Injectable } from '@angular/core';
 
 import { MockApiRequestsService } from '@secureworks/mockApiRequests';
 import { userList as userData } from './data';
+import { MockApiResponse, MockApiResponseMainBody, User } from './types/response.interface';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class UserListMockApi {
   response: MockApiResponse = new MockApiResponse();
-  private _userList: any[] = userData;
+  private _userList: User[] = userData;
 
   /**
    * Constructor
@@ -87,7 +88,7 @@ export class UserListMockApi {
     // @ User - GET by ID
     // -----------------------------------------------------------------------------------------------------
     this._mockApiService
-      .onGet('api/user/contact')
+      .onGet('api/user/getById')
       .reply(({ request }) => {
         // Get the id from the params
         const id = request.params.get('id');
@@ -96,59 +97,72 @@ export class UserListMockApi {
         const users = cloneDeep(this._userList);
 
         // Find the user
-        const user = users.find((item) => item.id === id);
+        const index = users.findIndex((item) => item.id === id) ? users.findIndex((item) => item.id === id) : null;
+
+        let res: User[] = [];
+        if (index !== null) {
+          res = [users[index]];
+        } else {
+          res = [];
+        }
+
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = res;
 
         // Return the response
-        return [200, user];
+        return [200, this.response];
       });
 
     // -----------------------------------------------------------------------------------------------------
     // @ User - POST
     // -----------------------------------------------------------------------------------------------------
-    this._mockApiService.onPost('api/user/contact').reply(({request}) => {
+    this._mockApiService.onPost('api/user/create').reply(({request}) => {
       // Generate a new contact
       const newUser = request.body
 
       // Unshift the new contact
       this._userList.unshift(newUser);
 
+      this.response.success = true;
+      this.response.response = new MockApiResponseMainBody();
+      this.response.response.users = this._userList;
+
       // Return the response
-      return [200, newUser];
+      return [200, this.response];
     });
 
     // -----------------------------------------------------------------------------------------------------
     // @ User - PATCH
     // -----------------------------------------------------------------------------------------------------
     this._mockApiService
-      .onPatch('api/user/contact')
+      .onPatch('api/user/update')
       .reply(({ request }) => {
         // Get the id and contact
         const id = request.body.id;
         const userList = cloneDeep(request.body.user);
-
-        // Prepare the updated contact
-        let updatedUser = null;
 
         // Find the contact and update it
         this._userList.forEach((item, index, user) => {
           if (item.id === id) {
             // Update the contact
             user[index] = assign({}, user[index], userList);
-
-            // Store the updated contact
-            updatedUser = user[index];
           }
         });
 
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = this._userList;
+
         // Return the response
-        return [200, updatedUser];
+        return [200, this.response];
       });
 
     // -----------------------------------------------------------------------------------------------------
     // @ User - DELETE
     // -----------------------------------------------------------------------------------------------------
     this._mockApiService
-      .onDelete('api/user/contact')
+      .onDelete('api/user/delete')
       .reply(({ request }) => {
         // Get the id
         const id = request.params.get('id');
@@ -160,8 +174,12 @@ export class UserListMockApi {
           }
         });
 
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = this._userList;
+
         // Return the response
-        return [200, true];
+        return [200, this.response];
       });
   }
 }

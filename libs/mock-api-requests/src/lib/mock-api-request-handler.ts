@@ -2,6 +2,7 @@
 import { HttpRequest } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { take } from 'rxjs/operators';
+
 import { MockApiReplyCallback } from './mock-api-requests.types';
 
 export class MockApiRequestHandler {

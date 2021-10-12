@@ -10,6 +10,7 @@ import {
 } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { delay, switchMap } from 'rxjs/operators';
+
 import { MockApiRequestsService } from './mock-api-requests.service';
 
 @Injectable({

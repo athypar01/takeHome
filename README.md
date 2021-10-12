@@ -18,7 +18,7 @@
 The FrndsApp module displays the age demographics of the an user's friends.
 The app lets an anonymous user to
 
-- To reqister / update / delete a basic profile of an user (i.e. name, age, weight).
+- Reqister / Update / Delete the basic profile of an user (i.e. name, age, weight).
 - Add / Update other registered users as friends.
 
 ## TECH STACK
@@ -37,14 +37,60 @@ The project is written in [Angular](https://angular.io/) v12 framework. The othe
 - Linting -- ESlint, Prettier, Husky
 - Versioning -- Standard Version
 
+## PREREQUISITES
+
+---
+
+Install Node 14.
+
+- Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
+
+Global install of the latest Angular CLI release
+
+- Run `npm install -g @angular/cli`
+
+
+## QUICK START
+
+---
+
+Clone the repo from github
+
+- Run `git clone https://github.com/athypar01/takeHome` from the CLI
+
+Change directory
+
+- Run `cd secureworks` from the CLI
+
+Install the repo with npm
+
+- Run `npm install` from the CLI
+
+Start the server in local
+
+- Run `npm run start` from the CLI
+
+Build production build
+
+- Run `npm run build` from the CLI
+
+Run unit tests
+
+- Run `nx run-many --target=test --all=true` from the CLI to run all unit tests.
+
+Run end-to-end tests
+
+- Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
+
 
 ## FILE ORGANIZATION
 
 ---
 
-The primary app is triggered from the apps folder within the friends-profile folder. The app is a shell that calls the lib module.
+The primary app is triggered from the friends-profile folder (within the apps folder). 
+The main app only serves as a shell to the lib/shared modules.
 
-The test coverage of the app and feature modules are grouped under the coverage folder.
+The test coverages for the app and feature modules are grouped under the coverage folder.
 
 Feature and reusabled modules are grouped under the libs folder. Some of the feature modules within this project are
 
@@ -52,7 +98,7 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
 - Icons -- A module to display material-icons & non-material icons in the component
 - Layout -- A container module to control the layout of the application
 - Mock-api-data -- A module that holds mock-data to demonstrate the POC for the application.
-- Mock-api-requests -- A module to mock the GET, POST, PUT, DELETE API requests.
+- Mock-api-requests -- A module to mock the GET, POST, PUT, PATCH, DELETE API requests.
 - Shared Folder - Global folder for the assets, styles, and environment.
 - User -- Core module for this application that CRUD operation of the frndsApp.
 
@@ -311,49 +357,3 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
     - **generators**
     - [tsconfig.tools.json](tools/tsconfig.tools.json)
   - [tsconfig.base.json](tsconfig.base.json)
-
-
-## PREREQUISITES
-
----
-
-Install Node 14.
-
-- Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
-
-Global install of the latest Angular CLI release
-
-- Run `npm install -g @angular/cli`
-
-
-## QUICK START
-
----
-
-Clone the repo from github
-
-- Run `git clone https://github.com/athypar01/takeHome` from the CLI
-
-Change directory
-
-- Run `cd secureworks` from the CLI
-
-Install the repo with npm
-
-- Run `npm install` from the CLI
-
-Start the server in local
-
-- Run `npm run start` from the CLI
-
-Build production build
-
-- Run `npm run build` from the CLI
-
-Run unit tests
-
-- Run `nx run-many --target=test --all=true` from the CLI to run all unit tests.
-
-Run end-to-end tests
-
-- Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
