@@ -97,6 +97,7 @@
     "jest-preset-angular": "9.0.7",
     "lint-staged": "^11.1.2",
     "lodash-es": "^4.17.21",
+    "markdown-notes-tree": "^1.11.2",
     "postcss": "^8.3.6",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",

@@ -24,14 +24,6 @@ export class UserGuard implements CanDeactivate<DetailsComponent> {
       nextRoute = nextRoute.firstChild;
     }
 
-    // If the next state doesn't contain '/frnds-app'
-    // it means we are navigating away from the
-    // frnds-app
-    if (!nextState.url.includes('/frnds-app')) {
-      // Let it navigate
-      return true;
-    }
-
     // If we are navigating to another contact...
     if (nextRoute.paramMap.get('id') !== null && nextRoute.paramMap.get('id') !== undefined) {
       // Just navigate
