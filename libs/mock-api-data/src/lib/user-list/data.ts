@@ -5,7 +5,8 @@ export const userList = [
     age: '25',
     weight: '120',
     friends: [
-
+      { id: '9d3f0e7f-dcbd-4e56-a5e8-87b8154e9edf' },
+      { id: 'f4ad15d9-5a24-463a-88ea-6189d6bb3a53' }
     ]
   },
   {
@@ -20,8 +21,8 @@ export const userList = [
   {
     id: '9d3f0e7f-dcbd-4e56-a5e8-87b8154e9edf',
     name: 'Bernard Langley',
-    age: '25',
-    weight: '120',
+    age: '35',
+    weight: '180',
     friends: [
 
     ]
@@ -47,7 +48,7 @@ export const userList = [
   {
     id: 'f4ad15d9-5a24-463a-88ea-6189d6bb3a53',
     name: 'Parrish Austin',
-    age: '25',
+    age: '15',
     weight: '120',
     friends: [
 
@@ -470,7 +471,7 @@ export const userList = [
   {
     id: 'cd482941-3eaf-4560-ac37-56a9296025df',
     name: 'Liliana Ayala',
-    age: '25',
+    age: '12',
     weight: '120',
     friends: [
 
@@ -479,17 +480,18 @@ export const userList = [
   {
     id: '22f18d47-ff8d-440e-888d-a1747c093052',
     name: 'Alice Harding',
-    age: '25',
+    age: '13',
     weight: '120',
     friends: [
-
+      {id: '114642a2-ccb7-4cb1-ad2b-5e9b6a0c1d2e'},
+      {id: 'a9a9f382-e4c3-42fb-9fe9-65aa534732b5'}
     ]
   },
   {
     id: 'a9a9f382-e4c3-42fb-9fe9-65aa534732b5',
     name: 'Francisca Perkins',
-    age: '25',
-    weight: '120',
+    age: '48',
+    weight: '340',
     friends: [
 
     ]
@@ -497,7 +499,7 @@ export const userList = [
   {
     id: '0222b24b-c288-48d1-b356-0f087fa172f8',
     name: 'Warren Gates',
-    age: '25',
+    age: '33',
     weight: '120',
     friends: [
 
@@ -534,7 +536,7 @@ export const userList = [
     id: 'bedcb6a2-da83-4631-866a-77d10d239477',
     name: 'Alvarado Turner',
     age: '25',
-    weight: '120',
+    weight: '180',
     friends: [
 
     ]
@@ -542,8 +544,8 @@ export const userList = [
   {
     id: '66f9de1b-f842-4d4c-bb59-f97e91db0462',
     name: 'Maldonado Rodriquez',
-    age: '25',
-    weight: '120',
+    age: '55',
+    weight: '187',
     friends: [
 
     ]
@@ -560,8 +562,8 @@ export const userList = [
   {
     id: '2fb89a90-5622-4b5b-8df3-d49b85905392',
     name: 'Estela Lyons',
-    age: '25',
-    weight: '120',
+    age: '56',
+    weight: '190',
     friends: [
 
     ]
@@ -668,16 +670,16 @@ export const userList = [
   {
     id: '5a01e870-8be1-45a5-b58a-ec09c06e8f28',
     name: 'Staci Hyde',
-    age: '25',
+    age: '63',
     weight: '120',
     friends: [
-
+      { id: '995df091-d78a-4bb7-840c-ba6a7d14a1bd' }
     ]
   },
   {
     id: '5ac1f193-f150-45f9-bfe4-b7b4e1a83ff9',
     name: 'Angela Gallagher',
-    age: '25',
+    age: '95',
     weight: '120',
     friends: [
 
@@ -686,7 +688,7 @@ export const userList = [
   {
     id: '995df091-d78a-4bb7-840c-ba6a7d14a1bd',
     name: 'Hutchinson Levy',
-    age: '25',
+    age: '35',
     weight: '120',
     friends: [
 
@@ -695,7 +697,7 @@ export const userList = [
   {
     id: '7184be71-a28f-4f2b-8c45-15f78cf2f825',
     name: 'Alissa Nelson',
-    age: '25',
+    age: '65',
     weight: '120',
     friends: [
 
@@ -704,7 +706,7 @@ export const userList = [
   {
     id: '325d508c-ca49-42bf-b0d5-c4a6b8da3d5c',
     name: 'Oliver Head',
-    age: '25',
+    age: '55',
     weight: '120',
     friends: [
 
@@ -713,7 +715,7 @@ export const userList = [
   {
     id: 'c674b6e1-b846-4bba-824b-0b4df0cdec48',
     name: 'Duran Barr',
-    age: '25',
+    age: '5',
     weight: '120',
     friends: [
 

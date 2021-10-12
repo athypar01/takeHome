@@ -8,7 +8,6 @@ const config = {
   experimental: {},
   future: {},
   darkMode: 'class',
-  important: true,
   purge: {
     enabled: process.env.TAILWIND_MODE === 'build',
     content: ['./apps/**/*.{html,scss,ts}', './libs/**/*.{html,scss,ts}'],

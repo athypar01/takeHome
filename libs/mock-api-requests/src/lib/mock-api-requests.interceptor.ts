@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,

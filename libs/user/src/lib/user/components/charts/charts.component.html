@@ -1,0 +1,7 @@
+<figure id="pie"></figure>
+<ng-container *ngIf="user$ | async as user">
+  <h3 class="text-center" *ngIf="user.friends !== null && user.friends.length !==0">
+    Age demographics (%) of <span class="mx-2">{{ user.name }}</span
+    >'s {{ user.friends.length }} friends
+  </h3>
+</ng-container>

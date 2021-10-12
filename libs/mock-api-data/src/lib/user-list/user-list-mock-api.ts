@@ -1,5 +1,6 @@
+import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds-app-state.interface';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { assign, cloneDeep } from 'lodash-es';
-import { v4 as uuid } from 'uuid';
 import { Injectable } from '@angular/core';
 
 import { MockApiRequestsService } from '@secureworks/mockApiRequests';
@@ -9,6 +10,7 @@ import { userList as userData } from './data';
   providedIn: 'root',
 })
 export class UserListMockApi {
+  response: MockApiResponse = new MockApiResponse();
   private _userList: any[] = userData;
 
   /**
@@ -30,16 +32,22 @@ export class UserListMockApi {
     // -----------------------------------------------------------------------------------------------------
     // @ User - GET
     // -----------------------------------------------------------------------------------------------------
-    this._mockApiService.onGet('api/user/all').reply(() => {
-      // Clone the user list
-      const userList = cloneDeep(this._userList);
+    this._mockApiService
+      .onGet('api/user/all')
+      .reply(() => {
+        // Clone the user list
+        const userList = cloneDeep(this._userList);
 
-      // Sort the contacts by the name field by default
-      userList.sort((a, b) => a.name.localeCompare(b.name));
+        // Sort the contacts by the name field by default
+        userList.sort((a, b) => a.name.localeCompare(b.name));
 
-      // Return the response
-      return [200, userList];
-    });
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = userList;
+
+        // Return the response
+        return [200, this.response];
+      });
 
     // -----------------------------------------------------------------------------------------------------
     // @ User Search - GET
@@ -66,8 +74,13 @@ export class UserListMockApi {
         // Sort the contacts by the name field by default
         users.sort((a, b) => a.name.localeCompare(b.name));
 
+        this.response.success = true;
+        this.response.response = new MockApiResponseMainBody();
+        this.response.response.users = users;
+
+
         // Return the response
-        return [200, users];
+        return [200, this.response];
       });
 
     // -----------------------------------------------------------------------------------------------------
@@ -92,15 +105,9 @@ export class UserListMockApi {
     // -----------------------------------------------------------------------------------------------------
     // @ User - POST
     // -----------------------------------------------------------------------------------------------------
-    this._mockApiService.onPost('api/user/contact').reply(() => {
+    this._mockApiService.onPost('api/user/contact').reply(({request}) => {
       // Generate a new contact
-      const newUser = {
-        id: uuid(),
-        name: null,
-        age: null,
-        weight: null,
-        friends: [],
-      };
+      const newUser = request.body
 
       // Unshift the new contact
       this._userList.unshift(newUser);
@@ -117,7 +124,7 @@ export class UserListMockApi {
       .reply(({ request }) => {
         // Get the id and contact
         const id = request.body.id;
-        const userList = cloneDeep(request.body.userList);
+        const userList = cloneDeep(request.body.user);
 
         // Prepare the updated contact
         let updatedUser = null;
@@ -156,6 +163,5 @@ export class UserListMockApi {
         // Return the response
         return [200, true];
       });
-
   }
 }

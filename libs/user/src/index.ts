@@ -1,1 +1,1 @@
-export * from './lib/user/user.module';
+export * from './lib/user/frnds_app.module';

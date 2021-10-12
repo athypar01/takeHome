@@ -13,11 +13,14 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
-      "@secureworks/apiMockData": [
-        "libs/mock-api-data/src/index.ts"
+      "@secureworks/apiMockData": ["libs/mock-api-data/src/index.ts"],
+      "@secureworks/confirmation": [
+        "libs/components/confirmation/src/index.ts"
       ],
+      "@secureworks/icons": ["libs/icons/src/index.ts"],
       "@secureworks/layout": ["libs/layout/src/index.ts"],
       "@secureworks/mockApiRequests": ["libs/mock-api-requests/src/index.ts"],
       "@secureworks/shared/assets": ["libs/shared/assets/src/index.ts"],
@@ -28,7 +31,7 @@
         "libs/shared/environments/src/index.ts"
       ],
       "@secureworks/shared/styles": ["libs/shared/styles/src/index.ts"],
-      "@secureworks/user": ["libs/user/src/index.ts"]
+      "@secureworks/frnds-app": ["libs/user/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,7 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -20,10 +21,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'friends-profile'`, () => {
+  it(`should have as title 'frnds-app'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('friends-profile');
+    expect(app.title).toEqual('frnds-app');
   });
-
 });

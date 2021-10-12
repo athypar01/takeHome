@@ -3,17 +3,17 @@ import { Route, ExtraOptions, PreloadAllModules, RouterModule } from '@angular/r
 import { LayoutComponent } from '@secureworks/layout';
 
 export const appRoutes: Route[] = [
-  { path: '', pathMatch: 'full', redirectTo: 'user' },
+  { path: '', pathMatch: 'full', redirectTo: 'frnds-app' },
   // Auth routes for guests
   {
     path: '',
     component: LayoutComponent,
     children: [
       {
-        path: 'user',
+        path: '',
         loadChildren: () =>
-          import('@secureworks/user').then(
-            (m) => m.UserModule
+          import('@secureworks/frnds-app').then(
+            (m) => m.FrndsAppModule
           ),
       }
     ]

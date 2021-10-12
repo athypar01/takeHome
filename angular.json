@@ -1,6 +1,31 @@
 {
   "version": 1,
   "projects": {
+    "components-confirmation": {
+      "projectType": "library",
+      "root": "libs/components/confirmation",
+      "sourceRoot": "libs/components/confirmation/src",
+      "prefix": "secureworks",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/components/confirmation"],
+          "options": {
+            "jestConfig": "libs/components/confirmation/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/components/confirmation/src/**/*.ts",
+              "libs/components/confirmation/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
     "friends-profile": {
       "projectType": "application",
       "root": "apps/friends-profile",
@@ -29,7 +54,10 @@
                 "output": "assets"
               }
             ],
-            "styles": ["libs/shared/styles/index.scss"],
+            "styles": [
+              "libs/shared/styles/theme/_tailwind.scss",
+              "libs/shared/styles/index.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -37,8 +65,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -124,6 +152,31 @@
           "outputs": ["{options.outputFile}"],
           "options": {
             "lintFilePatterns": ["apps/friends-profile-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "icons": {
+      "projectType": "library",
+      "root": "libs/icons",
+      "sourceRoot": "libs/icons/src",
+      "prefix": "secureworks",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/icons"],
+          "options": {
+            "jestConfig": "libs/icons/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/icons/src/**/*.ts",
+              "libs/icons/src/**/*.html"
+            ]
           }
         }
       }
@@ -217,31 +270,6 @@
         }
       }
     },
-    "shared-data-access": {
-      "projectType": "library",
-      "root": "libs/shared/data-access",
-      "sourceRoot": "libs/shared/data-access/src",
-      "prefix": "secureworks",
-      "architect": {
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/shared/data-access"],
-          "options": {
-            "jestConfig": "libs/shared/data-access/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/shared/data-access/src/**/*.ts",
-              "libs/shared/data-access/src/**/*.html"
-            ]
-          }
-        }
-      }
-    },
     "shared-environments": {
       "projectType": "library",
       "root": "libs/shared/environments",
@@ -276,7 +304,7 @@
         }
       }
     },
-    "user": {
+    "frnds-app": {
       "root": "libs/user",
       "sourceRoot": "libs/user/src",
       "projectType": "library",

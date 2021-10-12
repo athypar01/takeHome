@@ -1,14 +1,23 @@
 module.exports = {
   displayName: 'user',
   preset: '../../jest.preset.js',
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
+      stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
+  coverageDirectory: '../../coverage/libs/mock-api-data',
   transform: {
-    '^.+\\.[tj]sx?$': 'ts-jest',
+    '^.+\\.(ts|js|html)$': 'jest-preset-angular',
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/user',
+  moduleNameMapper: {
+    "^lodash-es$": "lodash"
+  },
+  snapshotSerializers: [
+    'jest-preset-angular/build/serializers/no-ng-attributes',
+    'jest-preset-angular/build/serializers/ng-snapshot',
+    'jest-preset-angular/build/serializers/html-comment',
+  ],
 };
