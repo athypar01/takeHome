@@ -1,3 +1,4 @@
+import { SimpleDataModel } from './../components/charts/data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EntityState } from "@ngrx/entity";
 
@@ -32,6 +33,7 @@ export interface User {
   createdAt?: string | null;
   updatedAt?: string | null;
   friends: User[] | null;
+  chartData: Array<SimpleDataModel>
 }
 
 export class User {
@@ -40,8 +42,8 @@ export class User {
   age = '';
   weight = '';
   friends: User[] | null = [];
+  chartData: Array<SimpleDataModel> = [];
 }
-
 
 export interface Update<User> {
   id: string;

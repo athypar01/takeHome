@@ -29,11 +29,11 @@ const frndsAppInitReducer = createReducer(
   initialState,
 
   on(frndsAppInitActions.frndsAppInitAction, (state): FrndsAppStateInterface => ({
-    ...state
+    ...state, editToggleStatus: false, queryParam: null, selectedUserId: null
   })),
 
   on(frndsAppInitActions.frndsAppInitSuccessAction, (state, { users }) =>
-    frndsAppAdapter.setAll(users, { ...state, loaded: true })
+    frndsAppAdapter.setAll(users, { ...state, loaded: true, editToggleStatus: false })
   ),
 
   on(frndsAppInitActions.frndsAppInitFailureAction, (state, { error }): FrndsAppStateInterface => ({
@@ -76,10 +76,6 @@ const frndsAppInitReducer = createReducer(
     ...state, isNew: false, loaded: false, queryParam: query, selectedUserId: query, editToggleStatus: false, user: state.user
   })),
 
-  on(frndsAppSelectUserActions.frndsAppSelectUserClickAction, (state, { query }): FrndsAppStateInterface => ({
-    ...state, isNew: false, loaded: false, queryParam: query, selectedUserId: query, editToggleStatus: false, user: state.user
-  })),
-
   on(frndsAppSelectUserActions.loadSelectedUserSuccessAction, (state, { user: user }): FrndsAppStateInterface =>
     frndsAppAdapter.setOne(user, { ...state, isNew: false, loaded: true, queryParam: null, selectedUserId: null, user: user, editToggleStatus: false, isSubmitting: false })
   ),
@@ -88,8 +84,12 @@ const frndsAppInitReducer = createReducer(
     ...state, error
   })),
 
+  on(frndsAppSelectUserActions.frndsAppUpdateUserInitAction, (state, { user }): FrndsAppStateInterface => ({
+    ...state, queryParam: user.id, selectedUserId: user.id, editToggleStatus: true, user:user
+  })),
+
   on(frndsAppSelectUserActions.frndsAppUpdateUserEditAction, (state, { user }): FrndsAppStateInterface => ({
-    ...state, queryParam: state.selectedUserId, selectedUserId: state.selectedUserId, editToggleStatus: true
+    ...state, queryParam: state.selectedUserId, selectedUserId: state.selectedUserId, editToggleStatus: true, user: user
   })),
 
   on(frndsAppDeleteActions.deleteExistingUser, (state, {id: id}): FrndsAppStateInterface => ({
@@ -105,7 +105,7 @@ const frndsAppInitReducer = createReducer(
   })),
 
   on(FrndsAppDetailActionTypes.clearUserSelection, (state): FrndsAppStateInterface => ({
-    ...state, queryParam: null, selectedUserId: null, editToggleStatus: false
+    ...state, editToggleStatus: false
   }))
 );
 

@@ -1,5 +1,5 @@
 import { addNewUserFailureAction } from './../actions/frnds_new_user.actions';
-import { frndsAppSelectUserActionFailure, frndsAppSelectUserActionSuccess, frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserSuccessAction } from './../actions/frnds_select_user.actions';
+import { frndsAppSelectUserActionFailure, frndsAppSelectUserActionSuccess, frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserInitAction, frndsAppUpdateUserSuccessAction } from './../actions/frnds_select_user.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { FrndsAppService } from '../../services/frnds_app.service';
 import { User } from '../../types/frnds-app-state.interface';
 import { frndsAppSelectUserClickAction } from '../actions/frnds_select_user.actions';
 import { addNewUser, addNewUserSuccessAction } from '../actions/frnds_new_user.actions';
-import { clearUserSelection, deleteExistingUser, deleteExistingUserFailureAction, deleteExistingUserSuccessAction } from '../actions/frnds_detail.actions';
+import { deleteExistingUser, deleteExistingUserFailureAction, deleteExistingUserSuccessAction } from '../actions/frnds_detail.actions';
 
 @Injectable()
 export class FrndsAppSelectUserEffects {
@@ -54,17 +54,6 @@ export class FrndsAppSelectUserEffects {
     { dispatch: false }
   )
 
-  redirectAfterCancel$= createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(clearUserSelection),
-        tap(() => {
-          this._router.navigate(['../', 'frnds-app'], { relativeTo: this._activatedRoute })
-        })
-      )
-    },
-    { dispatch: false }
-  )
 
   addNewUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -90,7 +79,7 @@ export class FrndsAppSelectUserEffects {
       ofType(frndsAppUpdateUserEditAction),
       mergeMap(({ id, user }) => {
         return this._frndsAppService.updateContact(id, user).pipe(
-          map((user: User | null) => {
+          map((user: User ) => {
             return frndsAppUpdateUserSuccessAction({ user })
           }),
 
@@ -103,8 +92,6 @@ export class FrndsAppSelectUserEffects {
       })
     )
   })
-
-
 
   deleteExistingUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -130,23 +117,11 @@ export class FrndsAppSelectUserEffects {
       return this.actions$.pipe(
         ofType(deleteExistingUserSuccessAction),
         tap(() => {
-          this._router.navigate(['../'], {relativeTo: this._activatedRoute});
+          this._router.navigate(['../'], { relativeTo: this._activatedRoute });
         })
       )
     },
     { dispatch: false }
   )
-
-  loadUpdatedList$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(frndsAppUpdateUserEditAction),
-        mergeMap(({ id, user }) => {
-          return this._frndsAppService.updateContact(id, user).pipe(
-            map((user: User | null) => {
-              return frndsAppSelectUserActionSuccess({ user: user })
-            })
-          )
-        }))
-    })
 }
+

@@ -47,6 +47,11 @@ export const frndsAppSelectUserActionSuccess = createAction(
   props<{ user: User | null}>()
 );
 
+export const frndsAppUpdateUserInitAction = createAction(
+  FrndsAppEditUserActionTypes.FRNDS_EDIT_USER_CLICK,
+  props<{ id: string, user: User }>()
+);
+
 export const frndsAppUpdateUserEditAction = createAction(
   FrndsAppEditUserActionTypes.FRNDS_EDIT_USER_INIT,
   props<{ id: string, user: User }>()
@@ -54,7 +59,7 @@ export const frndsAppUpdateUserEditAction = createAction(
 
 export const frndsAppUpdateUserSuccessAction = createAction(
   FrndsAppEditUserActionTypes.FRNDS_EDIT_USER_SUCCESS,
-  props<{ user: User | null}>()
+  props<{ user: User }>()
 );
 
 export const frndsAppUpdateUserFailureAction = createAction(
@@ -85,6 +90,7 @@ export class UpsertUsers implements Action{
   readonly type = UserActionTypes.UPSERT_USERS;
   constructor(public payload: { users: User[] }) {}
 }
+
 export class UpdateUser implements Action{
   readonly type = UserActionTypes.UPDATE_USER;
   constructor(public payload: User) {}

@@ -1,14 +1,13 @@
-import { DeleteUser } from './../+state/actions/frnds_select_user.actions';
+import { DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { filter, map, switchMap, take, tap, mergeMap } from 'rxjs/operators';
-import { v4 as uuid } from 'uuid';
-import { AddUser } from '../+state/actions/frnds_select_user.actions';
+import { map, switchMap, take, mergeMap } from 'rxjs/operators';
 
 import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
+import { SimpleDataModel } from '../components/charts/data.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,7 @@ import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 export class FrndsAppService {
   private _user: BehaviorSubject<User | any> = new BehaviorSubject(null);
   private _users: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
-  private _friends: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
+  public chartData: Array<any>;
 
   /**
    * Constructor
@@ -73,8 +72,15 @@ export class FrndsAppService {
               })
             })
             user.friends = friends;
+            if (user.friends && user.friends.length > 0) {
+              this.chartData = this.generateChartData(user.friends);
+            } else {
+              this.chartData = [];
+            }
+            user.chartData = this.chartData;
           } else {
             user.friends = [];
+            user.chartData = [];
           }
         })
         return of(users)
@@ -103,17 +109,16 @@ export class FrndsAppService {
       return this.users$?.pipe(
         take(1),
         map((users) => {
+
           // Find the user
           const user = users.find((item: User) => item.id === id);
-          // Update the user
-          this._user.next(user);
 
           // Return the user
           return user;
         }),
         switchMap((user) => {
           if (!user) {
-            return throwError('Could not found user with id of ' + id + '!');
+            return throwError('Could not find user with id of ' + id + '!');
           }
           return of(user);
         })
@@ -133,7 +138,11 @@ export class FrndsAppService {
       switchMap((userList) =>
         this._httpClient.post<User>('api/user/contact', user).pipe(
           map((newUser) => {
-            this.store.dispatch(new AddUser({user: newUser}));
+            let data: Array<SimpleDataModel> = [];
+            if(newUser && newUser.friends && newUser.friends.length !== 0) {
+              data = this.generateChartData(newUser.friends);
+            }
+            this.store.dispatch(new UpsertUser({ user: newUser }));
             const updatedUserList = [newUser, ...userList];
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
@@ -155,21 +164,21 @@ export class FrndsAppService {
   updateContact(id: string, user: User): Observable<User> {
     return this.users$.pipe(
       take(1),
-      switchMap((users) =>
+      switchMap(() =>
         this._httpClient.patch<User>('api/user/contact', { id, user })
           .pipe(
             map((user) => {
-              // Find the index of the updated contact
-              const index = users.findIndex((item) => item.id === id);
 
-              // Update the contact
-              users[index] = user;
+              if (user.friends && user.friends.length > 0) {
+                this.chartData = this.generateChartData(user.friends);
+              } else {
+                this.chartData = [];
+              }
 
-              // Update the users
-              this._users.next(users);
+              user.chartData = this.chartData;
 
-              // Return the updated contact
-              return users[index];
+              this.store.dispatch(new UpdateUser(user));
+              return user;
             })
           ))
     );
@@ -192,7 +201,7 @@ export class FrndsAppService {
               // Find the index of the deleted contact
               const index = users.findIndex((item) => item.id === id);
 
-              this.store.dispatch(new DeleteUser({id: id}));
+              this.store.dispatch(new DeleteUser({ id: id }));
 
               // Delete the contact
               users.splice(index, 1);
@@ -206,6 +215,60 @@ export class FrndsAppService {
           )
       )
     );
+  }
+
+  /**
+   * Delete the contact
+   *
+   * @param rawData
+   */
+  generateChartData(rawData: User[]): Array<SimpleDataModel> {
+    this.chartData = [];
+    let children = 0;
+    let youth = 0;
+    let adults = 0;
+    let seniors = 0;
+    let total = 0;
+
+    rawData.forEach((user: User) => {
+      if (+user.age < 15) {
+        children++;
+      }
+
+      if (+user.age >= 15 && +user.age < 25) {
+        youth++;
+      }
+
+      if (+user.age >= 25 && +user.age < 65) {
+        adults++;
+      }
+
+      if (+user.age >= 65) {
+        seniors++;
+      }
+    })
+
+    total = children + youth + adults + seniors;
+    const friendsAgeData: SimpleDataModel[] = []
+
+    if (children / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: 'red' });
+    }
+
+    if (youth / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: 'green' });
+    }
+
+    if (adults / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: 'blue' });
+    }
+
+    if (seniors / total * 100 !== 0) {
+      friendsAgeData.push({ name: "Seniors", value: (seniors / total * 100).toFixed(1), color: 'magenta' });
+    }
+
+    // this.store.dispatch(loadCharts());
+    return friendsAgeData;
   }
 
 }

@@ -1,5 +1,11 @@
-import { Component, ViewEncapsulation, OnInit, Input } from '@angular/core';
-import { color } from 'd3-color';
+import { Store } from '@ngrx/store';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { getSelectedUser } from '../../+state/selectors/frnds_app.selectors';
+import { User } from '../../types/frnds-app-state.interface';
+import { SimpleDataModel } from './data.interface';
 import { D3Service } from './data.service';
 
 @Component({
@@ -8,33 +14,43 @@ import { D3Service } from './data.service';
   styleUrls: ['./charts.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ChartsComponent implements OnInit {
-  @Input('username') public username: string;
-  @Input('frndCount') public frndCount: number;
-  @Input("pieData") public pieData: SimpleDataModel[] = [];
-  @Input("textColor") public textColor = "#ffffff";
-  @Input("isPercentage") public isPercentage = false;
-  @Input("enablePolylines") public enablePolylines = false;
 
-  public chartId;
+export class ChartsComponent implements OnInit {
+  user$: Observable<User | null | undefined>;
+
+  // The radius of the pie chart is half the smallest side
+  public chartId: any;
+  public isPercentage = true;
+  public enablePolylines = false;
+  public pieData: Array<SimpleDataModel> = [];
+  public textColor = "#ffffff";
+  public username: string;
+  public frndCount: number;
+  private colors: any;
   private svg: any;
   private margin = 25;
   private width = 650;
   private height = 650;
-
-
-  // The radius of the pie chart is half the smallest side
   private radius = Math.min(this.width, this.height) / 2 - this.margin;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  private colors: any;
-  constructor(private d3: D3Service) {
-    this.chartId = this.d3.generateId(5);
-  }
+  constructor(
+    private d3: D3Service,
+    private store: Store
+  ) { }
 
   ngOnInit() {
     this.createSvg();
     this.createColors();
-    this.drawChart();
+    this.user$ = this.store.select(getSelectedUser).pipe(takeUntil(this._unsubscribeAll));
+    this.user$.subscribe(res => {
+      if (res && res.friends && res.chartData && res.chartData.length !== 0) {
+        this.pieData = res.chartData;
+        this.chartId = this.d3.generateId(5);
+        this.pieData = res?.chartData;
+        this.drawChart();
+      }
+    })
   }
 
   private createSvg(): void {
@@ -42,8 +58,6 @@ export class ChartsComponent implements OnInit {
       .select("figure#pie")
       .append("svg")
       .attr("viewBox", `0 0 ${this.width} ${this.height}`)
-      // .attr('width', this.width)
-      //.attr('height', this.height)
       .append("g")
       .attr(
         "transform",
@@ -52,6 +66,7 @@ export class ChartsComponent implements OnInit {
   }
 
   private createColors(data = this.pieData): void {
+    // Colors to user when
     this.colors = this.d3.d3
       .scaleOrdinal()
       .domain(data.map(d => d.value.toString()))
@@ -207,10 +222,13 @@ export class ChartsComponent implements OnInit {
         });
     }
   }
-}
 
-export interface SimpleDataModel {
-  name: string;
-  value: string;
-  color?: string;
+  /**
+* On destroy
+*/
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
 }

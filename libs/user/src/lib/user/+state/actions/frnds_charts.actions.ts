@@ -1,9 +1,11 @@
 import { createAction, props } from '@ngrx/store';
 
+import { SimpleDataModel } from './../../components/charts/data.interface';
 import { ChartActionTypes } from '../../types/actions/chart-action.types';
 
 export const loadCharts = createAction(
-  ChartActionTypes.CHARTS_INIT
+  ChartActionTypes.CHARTS_INIT,
+  props<{ data: Array<SimpleDataModel> }>()
 );
 
 export const loadChartsSuccess = createAction(

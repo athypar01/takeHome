@@ -1,6 +1,5 @@
 /* eslint-disable ngrx/prefix-selectors-with-select */
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { FrndsAppDetailActionTypes } from '../../types/actions/friends-app-action.types';
 
 import { FrndsAppStateInterface } from '../../types/frnds-app-state.interface';
 import { frndsAppAdapter, FRNDS_APP_FEATURE_KEY } from '../reducers/frnds_app_init.reducer';

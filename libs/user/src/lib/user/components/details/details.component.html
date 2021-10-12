@@ -86,11 +86,9 @@
           </ng-container>
 
           <!-- Chart -->
-          <ng-container>
-            <div class="relative" *ngIf="user.friends && user.friends.length !== 0">
-              <charts [enablePolylines]="true" [isPercentage]="true" [pieData]="chartData" [username]="user.name" [frndCount]="user.friends.length"></charts>
-            </div>
-          </ng-container>
+          <div class="relative" *ngIf="user && user.friends && user.chartData && user.chartData.length !== 0">
+            <charts></charts>
+          </div>
 
         </div>
 
