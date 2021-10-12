@@ -9,9 +9,7 @@
 - File Organization
 - Prerequisites
 - Quick Start
-- Running the application
 - Modifying mock data
-- Troubleshooting
 
 ## INTRODUCTION
 
@@ -339,3 +337,6 @@ Install the repo with npm
 
 Start the server in local
   - Run `npm run start`
+
+Build production build
+  - Run `npm run build`
