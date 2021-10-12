@@ -309,34 +309,46 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
     - [tsconfig.tools.json](tools/tsconfig.tools.json)
   - [tsconfig.base.json](tsconfig.base.json)
 
-
-
 ## PREREQUISITES
 
 ---
 
-Install Node 14. 
-  - Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
+Install Node 14.
+
+- Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
 
 Global install of the latest Angular CLI release
-  - Run `npm install -g @angular/cli`
 
+- Run `npm install -g @angular/cli`
 
 ## QUICK START
 
 ---
 
 Clone the repo from github
-  - Run `git clone https://github.com/athypar01/takeHome`
+
+- Run `git clone https://github.com/athypar01/takeHome`
 
 Change directory
-  - Run `cd secureworks`
+
+- Run `cd secureworks`
 
 Install the repo with npm
-  - Run `npm install`
+
+- Run `npm install`
 
 Start the server in local
-  - Run `npm run start`
+
+- Run `npm run start`
 
 Build production build
-  - Run `npm run build`
+
+- Run `npm run build`
+
+Run unit tests
+
+- Run `nx run-many --target=test --all=true` to run all tests in series.
+
+Run end-to-end tests
+
+- Run `nx run-many --target=e2e --all=true` to run end-to-end tests for all projects
