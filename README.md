@@ -34,6 +34,9 @@ The project is written in [Angular](https://angular.io/) v12 framework. The othe
 - Charts -- D3.js
 - Unit Testing -- Jest.
 - End-to-End Testing -- Cypress.
+- Linting -- ESlint, Prettier, Husky
+- Versioning -- Standard Version
+
 
 ## FILE ORGANIZATION
 
@@ -309,6 +312,7 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
     - [tsconfig.tools.json](tools/tsconfig.tools.json)
   - [tsconfig.base.json](tsconfig.base.json)
 
+
 ## PREREQUISITES
 
 ---
@@ -321,34 +325,35 @@ Global install of the latest Angular CLI release
 
 - Run `npm install -g @angular/cli`
 
+
 ## QUICK START
 
 ---
 
 Clone the repo from github
 
-- Run `git clone https://github.com/athypar01/takeHome`
+- Run `git clone https://github.com/athypar01/takeHome` from the CLI
 
 Change directory
 
-- Run `cd secureworks`
+- Run `cd secureworks` from the CLI
 
 Install the repo with npm
 
-- Run `npm install`
+- Run `npm install` from the CLI
 
 Start the server in local
 
-- Run `npm run start`
+- Run `npm run start` from the CLI
 
 Build production build
 
-- Run `npm run build`
+- Run `npm run build` from the CLI
 
 Run unit tests
 
-- Run `nx run-many --target=test --all=true` to run all tests in series.
+- Run `nx run-many --target=test --all=true` from the CLI to run all unit tests.
 
 Run end-to-end tests
 
-- Run `nx run-many --target=e2e --all=true` to run end-to-end tests for all projects
+- Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
