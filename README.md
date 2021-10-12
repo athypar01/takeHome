@@ -313,7 +313,7 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
 
 ## PREREQUISITES
 
---
+---
 
 Install Node 14. 
   - Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
@@ -326,14 +326,14 @@ Global install of the latest Angular CLI release
 
 ---
 
-# clone the repo from github
-git clone https://github.com/athypar01/takeHome
+Clone the repo from github
+  - Run `git clone https://github.com/athypar01/takeHome`
 
-# change directory
-cd secureworks
+Change directory
+  - Run `cd secureworks`
 
-# install the repo with npm
-npm install
+Install the repo with npm
+  - Run `npm install`
 
-# start the server in local
-npm run start
+Start the server in local
+  - Run `npm run start`
