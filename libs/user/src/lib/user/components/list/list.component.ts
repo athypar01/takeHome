@@ -124,9 +124,9 @@ export class ListComponent implements OnInit {
  */
   validateSelection(): void {
     this.isUserSelected$ = this.store.select(getSelectedId);
+    // Open the drawer if user is selected or a new user is created
+    // Close drawer if in list view
     this.isUserSelected$.subscribe((currentId: string | null | undefined) => {
-      // Open the drawer if user is selected or a new user is created
-      // Close drawer if in list view
       if (currentId !== null && currentId !== undefined) {
         this.openStatus = true;
       } else {
