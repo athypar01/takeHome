@@ -162,16 +162,10 @@ export class FrndsAppService {
       take(1),
       switchMap((userList) =>
         this._httpClient.post<User>('api/user/create', user).pipe(
-          map((newUser: User) => {
-            let data: Array<SimpleDataModel> = [];
-            if (newUser && newUser.friends && newUser.friends.length !== 0) {
-              data = this.generateChartData(newUser.friends);
-            }
-
+          map(() => {
             // this.store.dispatch(new AddUser({user: newUser}))
             // Update the user list with the new user
             const updatedUserList = [...userList];
-            console.log(updatedUserList)
             this.userList = updatedUserList;
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
