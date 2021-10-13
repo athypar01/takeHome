@@ -44,3 +44,10 @@ export const isEditStatus = createSelector(
   frndsAppFeatureSelector,
   (frndsAppState: FrndsAppStateInterface) => frndsAppState.editToggleStatus
 );
+
+export const validationErrorsSelector = createSelector(
+  frndsAppFeatureSelector,
+  (frndsAppState: FrndsAppStateInterface) => frndsAppState.validationErrors
+)
+
+

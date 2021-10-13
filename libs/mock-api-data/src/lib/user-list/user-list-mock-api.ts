@@ -131,20 +131,22 @@ export class UserListMockApi {
         const id = request.body.id;
         const userList = cloneDeep(request.body.user);
 
+        // Prepare the updated contact
+        let updatedUser = null;
+
         // Find the contact and update it
         this._userList.forEach((item, index, user) => {
           if (item.id === id) {
             // Update the contact
             user[index] = assign({}, user[index], userList);
+
+            // Store the updated contact
+            updatedUser = user[index];
           }
         });
 
-        this.response.success = true;
-        this.response.response = new MockApiResponseMainBody();
-        this.response.response.users = this._userList;
-
         // Return the response
-        return [200, this.response];
+        return [200, updatedUser];
       });
 
     // -----------------------------------------------------------------------------------------------------

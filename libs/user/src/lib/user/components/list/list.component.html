@@ -53,10 +53,10 @@
                   <!-- Group -->
                   <ng-container (click)="onBackdropClicked()" *ngIf="
                       i === 0 ||
-                      user.name.charAt(0) !== users[i - 1].name.charAt(0)
+                      user?.name?.charAt(0) !== users[i - 1]?.name?.charAt(0)
                     ">
                     <div class=" z-10 sticky top-0 text-xl -mt-px px-6 py-1 md:px-8 border-t border-b font-extrabold uppercase text-secondary bg-gray-50 dark:bg-gray-900">
-                      {{ user.name.charAt(0) }}
+                      {{ user?.name?.charAt(0) }}
                     </div>
                   </ng-container>
 
@@ -65,14 +65,14 @@
                     <div class="flex flex-0 items-center justify-center w-10 h-10 ml-5 rounded-full overflow-hidden">
                       <ng-container>
                         <div class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                          {{ user.name.charAt(0) }}
+                          {{ user?.name?.charAt(0) }}
                         </div>
                       </ng-container>
                     </div>
 
                     <div class="min-w-0 ml-4">
                       <div class="font-medium leading-5 truncate">
-                        {{ user.name }}
+                        {{ user?.name }}
                       </div>
                       <div class="leading-5 truncate text-secondary">
                         {{ user.age }} yo / {{ user.weight }} lbs / {{user.friends?.length}} {{user.friends?.length |

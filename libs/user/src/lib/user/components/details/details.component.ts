@@ -10,10 +10,11 @@ import { ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from '../list/list.component';
 import { User } from '../../types/frnds-app-state.interface';
 import { getAllUsers, getSelectedUser, isEditStatus } from '../../+state/selectors/frnds_app.selectors';
-import { frndsAppSelectUserClickAction, frndsAppUpdateUserEditAction, frndsAppUpdateUserInitAction } from '../../+state/actions/frnds_select_user.actions';
+import { frndsAppSelectUserClickAction, frndsAppUpdateUserInitAction, UpdateUser } from '../../+state/actions/frnds_select_user.actions';
 import { addNewUser } from '../../+state/actions/frnds_new_user.actions';
 import { clearUserSelection, deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
 import { FrndsAppService } from '../../services/frnds_app.service';
+import { BackendErrorsInterface } from '../../types/backendErrors.interface';
 
 @Component({
   selector: 'user-details',
@@ -31,8 +32,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
   editMode$: Observable<boolean>;
   user$: Observable<User | null | undefined>;
   users$: Observable<User[] | null | undefined>;
+  backendErrors$: Observable<BackendErrorsInterface | null>
   selectedId$: Observable<string | null | undefined>;
   currentUserId: string;
+  errorMessages: string[] = [];
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   constructor(
@@ -69,10 +72,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
     // Create the user form
     this.userForm = this._formBuilder.group({
       id: new FormControl(''),
-      name: new FormControl('', [Validators.required]),
-      age: new FormControl('', [Validators.required]),
-      weight: new FormControl('', [Validators.required]),
-      friendsNameList: new FormControl([], [Validators.required]),
+      name: new FormControl('', [Validators.required, Validators.pattern("^([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}")]),
+      age: new FormControl('', [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
+      weight: new FormControl('', [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]),
+      friendsNameList: new FormControl([]),
       friends: new FormControl([]),
     });
   }
@@ -82,6 +85,64 @@ export class DetailsComponent implements OnInit, OnDestroy {
    */
   get friendsFormControl() {
     return this.userForm.get('friendsNameList') as FormControl;
+  }
+
+  getErrorMessage() {
+    this.errorMessages = [];
+
+    this.userForm.markAllAsTouched();
+
+    if (this.userForm.controls.name.hasError('required') && this.userForm.controls.name.touched) {
+      this.errorMessages.push('Name is required');
+    }
+
+    if (this.userForm.controls.name.hasError('pattern') && this.userForm.controls.name.touched){
+      this.errorMessages.push('Name must be min 2 characters');
+      this.errorMessages.push('Name must have a max of 30 characters');
+      this.errorMessages.push('Name must not begin or end with special charcters');
+    }
+
+    if (this.userForm.controls.age.hasError('required') && this.userForm.controls.age.touched){
+      this.errorMessages.push('Age is required');
+    }
+
+    if (this.userForm.controls.weight.hasError('required') && this.userForm.controls.weight.touched){
+      this.errorMessages.push('Weight is required');
+    }
+
+    if (this.userForm.controls.age.hasError('min') && this.userForm.controls.age.touched){
+      this.errorMessages.push('Min age must be above 1');
+    }
+
+    if (this.userForm.controls.weight.hasError('min')&& this.userForm.controls.weight.touched){
+      this.errorMessages.push('Min age must be above 1');
+    }
+
+    if (this.userForm.controls.age.hasError('pattern') && this.userForm.controls.age.touched){
+      this.errorMessages.push('Age must be numeric');
+      this.errorMessages.push('Max age is 999');
+    }
+
+    if (this.userForm.controls.weight.hasError('pattern') && this.userForm.controls.weight.touched){
+      this.errorMessages.push('Weight must be numeric');
+      this.errorMessages.push('Max weight is 9999');
+    }
+
+    if (this.userForm.controls.age.hasError('maxlength') && this.userForm.controls.age.touched){
+      this.errorMessages.push('Max age is 999');
+    }
+
+    if (this.userForm.controls.weight.hasError('maxlength') && this.userForm.controls.weight.touched){
+      this.errorMessages.push('Max weight is 9999');
+    }
+
+    this._changeDetectorRef.markForCheck();
+
+    if (this.errorMessages.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   initializeValues() {
@@ -188,7 +249,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
     // Get the contact object
     const userData = this.userForm.value;
     if (userData.id && userData.id !== 'new') {
-      this._store.dispatch(frndsAppUpdateUserEditAction({ id: userData.id, user: userData }));
+      if (userData.friends && userData.friends.length > 0) {
+        userData.chartData = this._frndsAppSvc.generateChartData(userData.friends);
+      }
+      this._store.dispatch(new UpdateUser(userData));
+
     } else {
       userData.id = uuid();
       userData.chartData = [];

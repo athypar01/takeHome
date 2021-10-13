@@ -61,7 +61,7 @@ const frndsAppInitReducer = createReducer(
   })),
 
   on(frndsAppNewUserActions.addNewUser, (state, { user }): FrndsAppStateInterface =>
-    frndsAppAdapter.setOne(user, { ...state, isNew: false, loaded: true, queryParam: null, editToggleStatus: false, isSubmitting: false })
+    frndsAppAdapter.setOne(user, { ...state, isNew: false, loaded: true, editToggleStatus: true, isSubmitting: false })
   ),
 
   on(frndsAppNewUserActions.addNewUserSuccessAction, (state, { users }): FrndsAppStateInterface =>
@@ -116,7 +116,7 @@ export function initReducer(state: FrndsAppStateInterface, action: frndsAppSelec
         action.payload.user,
         {
           ...state,
-          editToggleStatus: true,
+          editToggleStatus: false,
           selectedUserId: action.payload.user.id
         });
     }
@@ -130,7 +130,6 @@ export function initReducer(state: FrndsAppStateInterface, action: frndsAppSelec
       return frndsAppAdapter.upsertMany(action.payload.users, state);
     }
     case frndsAppSelectUserActions.UserActionTypes.UPDATE_USER: {
-
       return frndsAppAdapter.updateOne(
         {
           id: action.payload.id,
@@ -140,7 +139,7 @@ export function initReducer(state: FrndsAppStateInterface, action: frndsAppSelec
           ...state,
           editToggleStatus: false,
           selectedUserId: action.payload.id
-        }
+        },
       );
     }
     case frndsAppSelectUserActions.UserActionTypes.UPDATE_USERS: {

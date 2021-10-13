@@ -98,6 +98,7 @@
   </ng-container>
 
   <ng-container *ngIf="(editMode$ | async) === true">
+
     <!-- Header -->
     <div class="relative w-full h-40 sm:h-48 px-8 sm:px-12 bg-accent-100 dark:bg-accent-700">
       <!-- Background -->
@@ -124,6 +125,17 @@
               </div>
             </div>
           </div>
+
+          <mat-error class="my-3" *ngIf="userForm.status === 'INVALID' && userForm.touched">
+            <h3>Please fix the following errors</h3>
+            <ng-container *ngIf="getErrorMessage() && errorMessages.length > 0">
+              <ng-container *ngFor="let errMessage of errorMessages">
+                <ul class="error-messages">
+                  <li class="ml-3">{{errMessage}}</li>
+                </ul>
+              </ng-container>
+            </ng-container>
+          </mat-error>
 
           <!-- Name -->
           <div class="mt-4">
@@ -214,7 +226,9 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-100 dark:bg-transparent float-right" align="end">
+          <div
+            class="flex justify-end mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-100 dark:bg-transparent float-right"
+            align="end">
             <!-- Delete -->
             <button class="mr-2" mat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="deleteUser()">
               Delete

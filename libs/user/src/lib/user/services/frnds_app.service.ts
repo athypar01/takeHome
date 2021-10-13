@@ -1,4 +1,4 @@
-import { DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
+import { AddUser, DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { map, switchMap, take, mergeMap, catchError } from 'rxjs/operators';
 import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 import { SimpleDataModel } from '../components/charts/data.interface';
+import { addNewUser } from '../+state/actions/frnds_new_user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -161,21 +162,23 @@ export class FrndsAppService {
       take(1),
       switchMap((userList) =>
         this._httpClient.post<User>('api/user/create', user).pipe(
-          map((newUser) => {
+          map((newUser: User) => {
             let data: Array<SimpleDataModel> = [];
             if (newUser && newUser.friends && newUser.friends.length !== 0) {
               data = this.generateChartData(newUser.friends);
             }
-            this.store.dispatch(new UpsertUser({ user: newUser }));
+
+            this.store.dispatch(new AddUser({user: newUser}))
             // Update the user list with the new user
             const updatedUserList = [newUser, ...userList];
+            this.userList = updatedUserList;
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
             // Return the new user
             return updatedUserList;
           }),
           catchError((res) => {
-            return of(res.response)
+            return of(res.response.users)
           })
         )
       )
@@ -195,20 +198,10 @@ export class FrndsAppService {
         this._httpClient.patch<User>('api/user/update', { id, user })
           .pipe(
             map((user) => {
-
-              if (user.friends && user.friends.length > 0) {
-                this.chartData = this.generateChartData(user.friends);
-              } else {
-                this.chartData = [];
+              if (user && user.friends && user.friends.length !== 0) {
+                user.chartData = this.generateChartData(user.friends);
               }
-
-              user.chartData = this.chartData;
-
-              this.store.dispatch(new UpdateUser(user));
               return user;
-            }),
-            catchError((res) => {
-              return of(res.response)
             })
           ))
     );

@@ -1,5 +1,5 @@
 import { addNewUserFailureAction } from './../actions/frnds_new_user.actions';
-import { frndsAppSelectUserActionFailure, frndsAppSelectUserActionSuccess, frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserInitAction, frndsAppUpdateUserSuccessAction } from './../actions/frnds_select_user.actions';
+import { frndsAppSelectUserActionFailure, frndsAppSelectUserActionSuccess, frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserInitAction, frndsAppUpdateUserSuccessAction, UserActionTypes } from './../actions/frnds_select_user.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -76,7 +76,7 @@ export class FrndsAppSelectUserEffects {
 
   editExistingUser$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(frndsAppUpdateUserEditAction),
+      ofType(UserActionTypes.UPDATE_USER),
       mergeMap(({ id, user }) => {
         return this._frndsAppService.updateContact(id, user).pipe(
           map((user: User ) => {
@@ -95,7 +95,7 @@ export class FrndsAppSelectUserEffects {
 
   deleteExistingUser$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(deleteExistingUser),
+      ofType(UserActionTypes.DELETE_USER),
       mergeMap(({ id }) => {
         return this._frndsAppService.deleteContact(id).pipe(
           map((users: User[]) => {
