@@ -1,4 +1,3 @@
-import { SimpleDataModel } from './../charts/data.interface';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
