@@ -211,8 +211,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
  */
   toggleEditMode(id: string, user: User): void {
     this._store.dispatch(frndsAppUpdateUserInitAction({ id: id, user: user }));
-    this._changeDetectorRef.markForCheck();
     const users = this._frndsAppSvc.userList;
+    console.log(users)
     if (user) {
       this.filteredUsers = users.filter(res2 => res2.id !== user.id);
     } else {

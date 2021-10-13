@@ -48,7 +48,7 @@ export class FrndsAppSelectUserEffects {
       return this.actions$.pipe(
         ofType(frndsAppSelectUserClickAction),
         tap((query) => {
-          // this._router.navigate(['../', 'frnds-app', query.selectedUserId], { relativeTo: this._activatedRoute })
+          this._router.navigate(['../', 'frnds-app', query.query], { relativeTo: this._activatedRoute })
         })
       )
     },
