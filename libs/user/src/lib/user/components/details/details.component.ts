@@ -14,7 +14,6 @@ import { frndsAppSelectUserClickAction, frndsAppUpdateUserInitAction, UpdateUser
 import { addNewUser } from '../../+state/actions/frnds_new_user.actions';
 import { clearUserSelection, deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
 import { FrndsAppService } from '../../services/frnds_app.service';
-import { BackendErrorsInterface } from '../../types/backendErrors.interface';
 
 @Component({
   selector: 'user-details',
@@ -32,7 +31,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   editMode$: Observable<boolean>;
   user$: Observable<User | null | undefined>;
   users$: Observable<User[] | null | undefined>;
-  backendErrors$: Observable<BackendErrorsInterface | null>
   selectedId$: Observable<string | null | undefined>;
   currentUserId: string;
   errorMessages: string[] = [];

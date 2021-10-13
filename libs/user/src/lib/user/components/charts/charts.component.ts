@@ -39,6 +39,14 @@ export class ChartsComponent implements OnInit {
     private store: Store
   ) { }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Lifecycle hooks
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * On init
+   */
+
   ngOnInit() {
     this.createSvg();
     this.createColors();
@@ -53,6 +61,18 @@ export class ChartsComponent implements OnInit {
     })
   }
 
+  /**
+  * On destroy
+  */
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Prepare the canvas
+  // -----------------------------------------------------------------------------------------------------
   private createSvg(): void {
     this.svg = this.d3.d3
       .select("figure#pie")
@@ -64,6 +84,10 @@ export class ChartsComponent implements OnInit {
         "translate(" + this.width / 2 + "," + this.height / 2 + ")"
       );
   }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Generate the color scheme
+  // -----------------------------------------------------------------------------------------------------
 
   private createColors(data = this.pieData): void {
     // Colors to user when
@@ -80,6 +104,10 @@ export class ChartsComponent implements OnInit {
         "#212121"
       ]);
   }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Generate charts
+  // -----------------------------------------------------------------------------------------------------
 
   private drawChart(data = this.pieData): void {
     // Compute the position of each group on the pie
@@ -223,12 +251,4 @@ export class ChartsComponent implements OnInit {
     }
   }
 
-  /**
-* On destroy
-*/
-  ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
-    this._unsubscribeAll.next();
-    this._unsubscribeAll.complete();
-  }
 }

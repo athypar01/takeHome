@@ -74,7 +74,7 @@ export class ListComponent implements OnInit {
     });
   }
 
-  /**
+/**
  * On destroy
  */
   ngOnDestroy(): void {
