@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { map, switchMap, take, mergeMap } from 'rxjs/operators';
+import { map, switchMap, take, mergeMap, catchError } from 'rxjs/operators';
 
 import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
@@ -160,19 +160,22 @@ export class FrndsAppService {
     return this.users$.pipe(
       take(1),
       switchMap((userList) =>
-        this._httpClient.post<User>('api/user/contact', user).pipe(
+        this._httpClient.post<User>('api/user/create', user).pipe(
           map((newUser) => {
             let data: Array<SimpleDataModel> = [];
-            if(newUser && newUser.friends && newUser.friends.length !== 0) {
+            if (newUser && newUser.friends && newUser.friends.length !== 0) {
               data = this.generateChartData(newUser.friends);
             }
             this.store.dispatch(new UpsertUser({ user: newUser }));
+            // Update the user list with the new user
             const updatedUserList = [newUser, ...userList];
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
-            // Update the user list with the new user
             // Return the new user
             return updatedUserList;
+          }),
+          catchError((res) => {
+            return of(res.response)
           })
         )
       )
@@ -189,7 +192,7 @@ export class FrndsAppService {
     return this.users$.pipe(
       take(1),
       switchMap(() =>
-        this._httpClient.patch<User>('api/user/contact', { id, user })
+        this._httpClient.patch<User>('api/user/update', { id, user })
           .pipe(
             map((user) => {
 
@@ -203,6 +206,9 @@ export class FrndsAppService {
 
               this.store.dispatch(new UpdateUser(user));
               return user;
+            }),
+            catchError((res) => {
+              return of(res.response)
             })
           ))
     );
@@ -218,23 +224,22 @@ export class FrndsAppService {
       take(1),
       switchMap((users: User[]) =>
         this._httpClient
-          .delete('api/user/contact', { params: { id } })
+          .delete('api/user/delete', { params: { id } })
           .pipe(
-            map(() => {
+            map((res: MockApiResponse | any) => {
 
-              // Find the index of the deleted contact
-              const index = users.findIndex((item) => item.id === id);
-
-              this.store.dispatch(new DeleteUser({ id: id }));
-
-              // Delete the contact
-              users.splice(index, 1);
-
-              // Update the users
-              this._users.next(users);
-
-              // Return the deleted status
+              if (res.success) {
+                // Find the index of the deleted contact
+                const index = users.findIndex((item) => item.id === id);
+                this.store.dispatch(new DeleteUser({ id: id }));
+                // Delete the contact
+                users.splice(index, 1);
+              }
               return users;
+
+            }),
+            catchError((res: MockApiResponse) => {
+              return of(res.response.users)
             })
           )
       )
