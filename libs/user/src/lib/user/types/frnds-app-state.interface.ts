@@ -1,8 +1,8 @@
 import { SimpleDataModel } from './../components/charts/data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EntityState } from "@ngrx/entity";
+import { FRNDS_APP_FEATURE_KEY } from '../+state/reducers/frnds_app_init.reducer';
 
-import { FRNDS_APP_FEATURE_KEY } from "../+state/reducers/frnds_app_init.reducer";
 
 /**
  * Interface for the 'User' data
