@@ -1,4 +1,3 @@
-import { AddUser, DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -6,9 +5,9 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, switchMap, take, mergeMap, catchError } from 'rxjs/operators';
 
 import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
+import { DeleteUser } from './../+state/actions/frnds_select_user.actions';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 import { SimpleDataModel } from '../components/charts/data.interface';
-import { addNewUser } from '../+state/actions/frnds_new_user.actions';
 
 @Injectable({
   providedIn: 'root'
