@@ -1,3 +1,4 @@
+import { getSelectedUserId } from './../reducers/frnds_app_init.reducer';
 import { addNewUserFailureAction } from './../actions/frnds_new_user.actions';
 import { frndsAppSelectUserActionFailure, frndsAppSelectUserActionSuccess, frndsAppUpdateUserEditAction, frndsAppUpdateUserFailureAction, frndsAppUpdateUserInitAction, frndsAppUpdateUserSuccessAction, UserActionTypes } from './../actions/frnds_select_user.actions';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -47,7 +48,7 @@ export class FrndsAppSelectUserEffects {
       return this.actions$.pipe(
         ofType(frndsAppSelectUserClickAction),
         tap((query) => {
-          this._router.navigate(['../', 'frnds-app', query.query], { relativeTo: this._activatedRoute })
+          // this._router.navigate(['../', 'frnds-app', query.selectedUserId], { relativeTo: this._activatedRoute })
         })
       )
     },

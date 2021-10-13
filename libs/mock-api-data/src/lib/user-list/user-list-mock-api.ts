@@ -118,7 +118,7 @@ export class UserListMockApi {
       this.response.response.users = this._userList;
 
       // Return the response
-      return [200, this.response];
+      return [200, newUser];
     });
 
     // -----------------------------------------------------------------------------------------------------

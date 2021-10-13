@@ -178,7 +178,7 @@ export class FrndsAppService {
             return updatedUserList;
           }),
           catchError((res) => {
-            return of(res.response.users)
+            return of(res)
           })
         )
       )
