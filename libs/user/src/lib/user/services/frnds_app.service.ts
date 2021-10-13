@@ -14,6 +14,7 @@ import { SimpleDataModel } from '../components/charts/data.interface';
 })
 
 export class FrndsAppService {
+  public userList: User[] = [];
   private _user: BehaviorSubject<User | any> = new BehaviorSubject(null);
   private _users: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
   public chartData: Array<any>;
@@ -83,6 +84,7 @@ export class FrndsAppService {
             user.chartData = [];
           }
         })
+        this.userList = users;
         return of(users)
       }),
     );
@@ -96,6 +98,28 @@ export class FrndsAppService {
   searchUsers(query: string): Observable<User[]> {
     return this._httpClient.get<MockApiResponse>('api/user/search', { params: { query } }).pipe(
       map((response: MockApiResponse) => {
+        response.response.users.forEach(user => {
+          if (user !== null && user?.friends && user.friends.length > 0) {
+            const friends: User[] = [];
+            user.friends.forEach((friend: User) => {
+              this.userList?.forEach((userId: User) => {
+                if (friend.id === userId.id) {
+                  friends.push(userId)
+                }
+              })
+            })
+            user.friends = friends;
+            if (user.friends && user.friends.length > 0) {
+              this.chartData = this.generateChartData(user.friends);
+            } else {
+              this.chartData = [];
+            }
+            user.chartData = this.chartData;
+          } else {
+            user.friends = [];
+            user.chartData = [];
+          }
+        })
         return response.response.users
       })
     );
@@ -252,19 +276,19 @@ export class FrndsAppService {
     const friendsAgeData: SimpleDataModel[] = []
 
     if (children / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: 'red' });
+      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: '#6773f1' });
     }
 
     if (youth / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: 'green' });
+      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: '#32325d' });
     }
 
     if (adults / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: 'blue' });
+      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: '#6162b5' });
     }
 
     if (seniors / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Seniors", value: (seniors / total * 100).toFixed(1), color: 'magenta' });
+      friendsAgeData.push({ name: "Seniors", value: (seniors / total * 100).toFixed(1), color: '#6586f6' });
     }
 
     // this.store.dispatch(loadCharts());

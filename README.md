@@ -6,10 +6,10 @@
 
 - Introduction
 - Tech Stack
-- File Organization
 - Prerequisites
 - Quick Start
 - Modifying mock data
+- File Organization
 
 ## INTRODUCTION
 
@@ -36,6 +36,58 @@ The project is written in [Angular](https://angular.io/) v12 framework. The othe
 - End-to-End Testing -- Cypress.
 - Linting -- ESlint, Prettier, Husky
 - Versioning -- Standard Version
+
+## PREREQUISITES
+
+---
+
+Install Node 14.
+
+- Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
+
+Global install of the latest Angular CLI release
+
+- Run `npm install -g @angular/cli`
+
+## QUICK START
+
+---
+
+Clone the repo from github
+
+- Run `git clone https://github.com/athypar01/takeHome` from the CLI
+
+Change directory
+
+- Run `cd secureworks` from the CLI
+
+Install the repo with npm
+
+- Run `npm install` from the CLI
+
+Start the server in local
+
+- Run `npm run start` from the CLI
+
+Build production build
+
+- Run `npm run build` from the CLI
+
+Run unit tests
+
+- Run `nx run-many --target=test --all=true` from the CLI to run all unit tests.
+
+Run end-to-end tests
+
+- Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
+
+## MODIFYING MOCK DATA
+
+---
+
+To modify the initial data load, modify the below file
+
+- [data.ts](libs/mock-api-data/src/lib/user-list/data.ts)
 
 
 ## FILE ORGANIZATION
@@ -311,49 +363,3 @@ Feature and reusabled modules are grouped under the libs folder. Some of the fea
     - **generators**
     - [tsconfig.tools.json](tools/tsconfig.tools.json)
   - [tsconfig.base.json](tsconfig.base.json)
-
-
-## PREREQUISITES
-
----
-
-Install Node 14.
-
-- Install Node and NPM on Windows / Linux / Mac. (https://nodejs.org/en/download/)
-
-Global install of the latest Angular CLI release
-
-- Run `npm install -g @angular/cli`
-
-
-## QUICK START
-
----
-
-Clone the repo from github
-
-- Run `git clone https://github.com/athypar01/takeHome` from the CLI
-
-Change directory
-
-- Run `cd secureworks` from the CLI
-
-Install the repo with npm
-
-- Run `npm install` from the CLI
-
-Start the server in local
-
-- Run `npm run start` from the CLI
-
-Build production build
-
-- Run `npm run build` from the CLI
-
-Run unit tests
-
-- Run `nx run-many --target=test --all=true` from the CLI to run all unit tests.
-
-Run end-to-end tests
-
-- Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
