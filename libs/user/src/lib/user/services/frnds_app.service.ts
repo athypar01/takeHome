@@ -1,19 +1,21 @@
-import { DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
+import { AddUser, DeleteUser, UpdateUser, UpsertUser } from './../+state/actions/frnds_select_user.actions';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { map, switchMap, take, mergeMap } from 'rxjs/operators';
+import { map, switchMap, take, mergeMap, catchError } from 'rxjs/operators';
 
 import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
 import { MockApiResponse, User } from '../types/frnds-app-state.interface';
 import { SimpleDataModel } from '../components/charts/data.interface';
+import { addNewUser } from '../+state/actions/frnds_new_user.actions';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class FrndsAppService {
+  public userList: User[] = [];
   private _user: BehaviorSubject<User | any> = new BehaviorSubject(null);
   private _users: BehaviorSubject<User[] | any> = new BehaviorSubject(null);
   public chartData: Array<any>;
@@ -83,6 +85,7 @@ export class FrndsAppService {
             user.chartData = [];
           }
         })
+        this.userList = users;
         return of(users)
       }),
     );
@@ -96,6 +99,28 @@ export class FrndsAppService {
   searchUsers(query: string): Observable<User[]> {
     return this._httpClient.get<MockApiResponse>('api/user/search', { params: { query } }).pipe(
       map((response: MockApiResponse) => {
+        response.response.users.forEach(user => {
+          if (user !== null && user?.friends && user.friends.length > 0) {
+            const friends: User[] = [];
+            user.friends.forEach((friend: User) => {
+              this.userList?.forEach((userId: User) => {
+                if (friend.id === userId.id) {
+                  friends.push(userId)
+                }
+              })
+            })
+            user.friends = friends;
+            if (user.friends && user.friends.length > 0) {
+              this.chartData = this.generateChartData(user.friends);
+            } else {
+              this.chartData = [];
+            }
+            user.chartData = this.chartData;
+          } else {
+            user.friends = [];
+            user.chartData = [];
+          }
+        })
         return response.response.users
       })
     );
@@ -136,19 +161,24 @@ export class FrndsAppService {
     return this.users$.pipe(
       take(1),
       switchMap((userList) =>
-        this._httpClient.post<User>('api/user/contact', user).pipe(
-          map((newUser) => {
+        this._httpClient.post<User>('api/user/create', user).pipe(
+          map((newUser: User) => {
             let data: Array<SimpleDataModel> = [];
-            if(newUser && newUser.friends && newUser.friends.length !== 0) {
+            if (newUser && newUser.friends && newUser.friends.length !== 0) {
               data = this.generateChartData(newUser.friends);
             }
-            this.store.dispatch(new UpsertUser({ user: newUser }));
+
+            this.store.dispatch(new AddUser({user: newUser}))
+            // Update the user list with the new user
             const updatedUserList = [newUser, ...userList];
+            this.userList = updatedUserList;
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
-            // Update the user list with the new user
             // Return the new user
             return updatedUserList;
+          }),
+          catchError((res) => {
+            return of(res.response.users)
           })
         )
       )
@@ -165,19 +195,12 @@ export class FrndsAppService {
     return this.users$.pipe(
       take(1),
       switchMap(() =>
-        this._httpClient.patch<User>('api/user/contact', { id, user })
+        this._httpClient.patch<User>('api/user/update', { id, user })
           .pipe(
             map((user) => {
-
-              if (user.friends && user.friends.length > 0) {
-                this.chartData = this.generateChartData(user.friends);
-              } else {
-                this.chartData = [];
+              if (user && user.friends && user.friends.length !== 0) {
+                user.chartData = this.generateChartData(user.friends);
               }
-
-              user.chartData = this.chartData;
-
-              this.store.dispatch(new UpdateUser(user));
               return user;
             })
           ))
@@ -194,23 +217,22 @@ export class FrndsAppService {
       take(1),
       switchMap((users: User[]) =>
         this._httpClient
-          .delete('api/user/contact', { params: { id } })
+          .delete('api/user/delete', { params: { id } })
           .pipe(
-            map(() => {
+            map((res: MockApiResponse | any) => {
 
-              // Find the index of the deleted contact
-              const index = users.findIndex((item) => item.id === id);
-
-              this.store.dispatch(new DeleteUser({ id: id }));
-
-              // Delete the contact
-              users.splice(index, 1);
-
-              // Update the users
-              this._users.next(users);
-
-              // Return the deleted status
+              if (res.success) {
+                // Find the index of the deleted contact
+                const index = users.findIndex((item) => item.id === id);
+                this.store.dispatch(new DeleteUser({ id: id }));
+                // Delete the contact
+                users.splice(index, 1);
+              }
               return users;
+
+            }),
+            catchError((res: MockApiResponse) => {
+              return of(res.response.users)
             })
           )
       )
@@ -252,19 +274,19 @@ export class FrndsAppService {
     const friendsAgeData: SimpleDataModel[] = []
 
     if (children / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: 'red' });
+      friendsAgeData.push({ name: "Children", value: (children / total * 100).toFixed(1), color: '#6773f1' });
     }
 
     if (youth / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: 'green' });
+      friendsAgeData.push({ name: "Youth", value: (youth / total * 100).toFixed(1), color: '#32325d' });
     }
 
     if (adults / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: 'blue' });
+      friendsAgeData.push({ name: "Adults", value: (adults / total * 100).toFixed(1), color: '#6162b5' });
     }
 
     if (seniors / total * 100 !== 0) {
-      friendsAgeData.push({ name: "Seniors", value: (seniors / total * 100).toFixed(1), color: 'magenta' });
+      friendsAgeData.push({ name: "Seniors", value: (seniors / total * 100).toFixed(1), color: '#6586f6' });
     }
 
     // this.store.dispatch(loadCharts());

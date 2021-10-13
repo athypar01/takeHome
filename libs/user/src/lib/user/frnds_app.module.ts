@@ -32,13 +32,15 @@ import { FRNDS_APP_FEATURE_KEY, initReducer } from './+state/reducers/frnds_app_
 import { FrndsQueryEffects } from './+state/effects/frnds-query.effects';
 import { FrndsNewUserEffects } from './+state/effects/frnds-newuser.effects';
 import { FrndsAppSelectUserEffects } from './+state/effects/frnds-selectuser.effects';
+import { ErrorMessagesComponent } from './components/error-messages/error-messages.component';
 
 @NgModule({
   declarations: [
     UserComponent,
     DetailsComponent,
     ListComponent,
-    ChartsComponent
+    ChartsComponent,
+    ErrorMessagesComponent
   ],
   imports: [
     RouterModule.forChild(userRoutes),
