@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { FrndsAppQueryActionTypes } from './../../types/actions/friends-app-action.types';
+import { FrndsAppQueryActionTypes } from '../../types/friends-app-action.types';
 import { User } from '../../types/frnds-app-state.interface';
 
 export const frndsAppQueryAction = createAction(

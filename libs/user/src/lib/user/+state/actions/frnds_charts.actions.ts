@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 
 import { SimpleDataModel } from './../../components/charts/data.interface';
-import { ChartActionTypes } from '../../types/actions/chart-action.types';
+import { ChartActionTypes } from '../../types/chart-action.types';
 
 export const loadCharts = createAction(
   ChartActionTypes.CHARTS_INIT,

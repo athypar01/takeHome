@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 
 import { User } from './../../types/frnds-app-state.interface';
-import { FrndsAppInitActionTypes } from '../../types/actions/friends-app-action.types';
+import { FrndsAppInitActionTypes } from '../../types/friends-app-action.types';
 
 export const frndsAppInitAction = createAction(
   FrndsAppInitActionTypes.FRNDS_INIT

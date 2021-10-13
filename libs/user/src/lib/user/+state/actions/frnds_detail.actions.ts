@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { FrndsAppDetailActionTypes } from '../../types/actions/friends-app-action.types';
+import { FrndsAppDetailActionTypes } from '../../types/friends-app-action.types';
 import { User } from '../../types/frnds-app-state.interface';
 
 export const deleteExistingUser = createAction(

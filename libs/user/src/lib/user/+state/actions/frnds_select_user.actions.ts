@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Action, createAction, props } from '@ngrx/store';
 
-import { FrndsAppDetailActionTypes, FrndsAppEditUserActionTypes, FrndsAppSelectUserActionTypes } from '../../types/actions/friends-app-action.types';
+import { FrndsAppDetailActionTypes, FrndsAppEditUserActionTypes, FrndsAppSelectUserActionTypes } from '../../types/friends-app-action.types';
 import { Update, User } from '../../types/frnds-app-state.interface';
 
 export enum UserActionTypes {
