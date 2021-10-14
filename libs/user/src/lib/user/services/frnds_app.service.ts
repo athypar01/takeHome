@@ -4,10 +4,9 @@ import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, switchMap, take, mergeMap, catchError } from 'rxjs/operators';
 
-import { getAllUsers, getSelectedUser } from '../+state/selectors/frnds_app.selectors';
-import { DeleteUser } from './../+state/actions/frnds_select_user.actions';
-import { MockApiResponse, User } from '../types/frnds-app-state.interface';
-import { SimpleDataModel } from '../components/charts/data.interface';
+import { AddUser, DeleteUser, UpdateUser, UpsertUser, UpsertUsers } from '../+state/actions/frnds_app_entity.actions';
+import { getAllUsers, getSelectedUser, getSlectedUsers } from '../+state/selectors/frnds_app.selectors';
+import { MockApiResponse, SimpleDataModel, User } from '../types/frnds_app_state.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +61,7 @@ export class FrndsAppService {
         return response.response.users
       }),
       mergeMap(users => {
-        users.forEach(user => {
+        users.forEach((user: User) => {
           if (user !== null && user?.friends && user.friends.length > 0) {
             const friends: User[] = [];
             user.friends.forEach((friend: User) => {
@@ -96,9 +95,11 @@ export class FrndsAppService {
    * @param query
    */
   searchUsers(query: string): Observable<User[]> {
-    return this._httpClient.get<MockApiResponse>('api/user/search', { params: { query } }).pipe(
-      map((response: MockApiResponse) => {
-        response.response.users.forEach(user => {
+    return this.users$.pipe(
+      take(1),
+      switchMap((userList) => this._httpClient.get<User[]>('api/user/search', { params: { query } }).pipe(
+      map((users) => {
+        users.forEach((user: User) => {
           if (user !== null && user?.friends && user.friends.length > 0) {
             const friends: User[] = [];
             user.friends.forEach((friend: User) => {
@@ -120,15 +121,15 @@ export class FrndsAppService {
             user.chartData = [];
           }
         })
-        return response.response.users
+        return users
       })
-    );
+    )));
   }
 
   /**
    * Get user by id
    */
-  getUserById(id: string | null): Observable<User | null> {
+  getUserById(id: string | null): Observable<User> {
     if (id !== null && id !== undefined && id !== 'new') {
       return this.users$?.pipe(
         take(1),
@@ -148,8 +149,7 @@ export class FrndsAppService {
         })
       );
     } else {
-      this._user.next(null);
-      return of(null)
+      return of()
     }
   }
 
@@ -161,14 +161,13 @@ export class FrndsAppService {
       take(1),
       switchMap((userList) =>
         this._httpClient.post<User>('api/user/create', user).pipe(
-          map(() => {
-            // this.store.dispatch(new AddUser({user: newUser}))
+          map((res) => {
+            this.store.dispatch(new UpsertUser({user}))
             // Update the user list with the new user
             const updatedUserList = [...userList];
-            this.userList = updatedUserList;
             // Sort the contacts by the name field by default
             updatedUserList.sort((a, b) => a.name.localeCompare(b.name));
-            // Return the new user
+            this.userList = updatedUserList;
             return updatedUserList;
           }),
           catchError((res) => {
@@ -213,21 +212,15 @@ export class FrndsAppService {
         this._httpClient
           .delete('api/user/delete', { params: { id } })
           .pipe(
-            map((res: MockApiResponse | any) => {
-
-              if (res.success) {
+            map(() => {
                 // Find the index of the deleted contact
                 const index = users.findIndex((item) => item.id === id);
                 this.store.dispatch(new DeleteUser({ id: id }));
                 // Delete the contact
                 users.splice(index, 1);
-              }
-              return users;
 
+              return users;
             }),
-            catchError((res: MockApiResponse) => {
-              return of(res.response.users)
-            })
           )
       )
     );

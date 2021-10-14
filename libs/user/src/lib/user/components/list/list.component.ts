@@ -7,12 +7,9 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
-import { User } from './../../types/frnds-app-state.interface';
-import { frndsAppInitAction } from './../../+state/actions/frnds_init.actions';
-import { getAllUsers, getSelectedId } from '../../+state/selectors/frnds_app.selectors';
-import { frndsAppQueryAction } from '../../+state/actions/frnds-query.actions';
-import { frndsAppNewUserClickAction } from '../../+state/actions/frnds_new_user.actions';
-import { frndsAppSelectUserClickAction } from '../../+state/actions/frnds_select_user.actions';
+import { getAllUsers, getSelectedId, getSlectedUsers } from '../../+state/selectors/frnds_app.selectors';
+import { addNewUserTrigger, getUserById, getUserByQuery, initFrndsApp } from './../../+state/actions/frnds_app_http.actions';
+import { User } from '../../types/frnds_app_state.interface';
 
 @Component({
   selector: 'list',
@@ -27,7 +24,7 @@ export class ListComponent implements OnInit {
   drawerMode: 'side' | 'over' = 'side';
 
   isUserSelected$: Observable<string | null | undefined>;
-  users$: Observable<User[] | null>;
+  users$: Observable<User[] | undefined>;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   openStatus = true;
@@ -49,17 +46,17 @@ export class ListComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this.store.dispatch(frndsAppInitAction())
     this.initializeValues();
 
     // Subscribe to search input field value changes
     this.searchInputControl.valueChanges
       .pipe(
         takeUntil(this._unsubscribeAll),
-        switchMap(async (query) =>
+        switchMap(async (query) =>{
           // Search
-          this.store.dispatch(frndsAppQueryAction({ query }))
-        )
+          this.store.dispatch(getUserByQuery({ query }))
+          this.users$ = this.store.select(getSlectedUsers);
+        })
       )
       .subscribe();
 
@@ -89,6 +86,7 @@ export class ListComponent implements OnInit {
   // -----------------------------------------------------------------------------------------------------
 
   initializeValues() {
+    this.store.dispatch(initFrndsApp())
     this.users$ = this.store.select(getAllUsers);
     this.validateSelection();
   }
@@ -107,7 +105,7 @@ export class ListComponent implements OnInit {
  * Create User
  */
   createUser(): void {
-    this.store.dispatch(frndsAppNewUserClickAction());
+    this.store.dispatch(addNewUserTrigger());
     this.validateSelection();
   }
 
@@ -115,7 +113,7 @@ export class ListComponent implements OnInit {
  * Select User from the list
  */
   selectUser(currentId: string): void {
-    this.store.dispatch(frndsAppSelectUserClickAction({ query: currentId }));
+    this.store.dispatch(getUserById({ id: currentId }));
     this.validateSelection();
   }
 

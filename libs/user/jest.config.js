@@ -12,6 +12,9 @@ module.exports = {
   transform: {
     '^.+\\.(ts|js|html)$': 'jest-preset-angular',
   },
+  transformIgnorePatterns: [
+    '^/node_modules/(?!d3-(array|format))'
+  ],
   moduleNameMapper: {
     "^lodash-es$": "lodash"
   },

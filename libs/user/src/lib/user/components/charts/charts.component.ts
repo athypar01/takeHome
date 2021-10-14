@@ -4,8 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { getSelectedUser } from '../../+state/selectors/frnds_app.selectors';
-import { User } from '../../types/frnds-app-state.interface';
-import { SimpleDataModel } from './data.interface';
+import { SimpleDataModel, User } from '../../types/frnds_app_state.interface';
 import { D3Service } from './data.service';
 
 @Component({
