@@ -49,7 +49,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   userForm: FormGroup;
   editMode$: Observable<boolean>;
-  isNew$: Observable<boolean>;
   user$: Observable<User | null | undefined>;
   users$: Observable<User[] | null | undefined>;
   selectedId$: Observable<string | null | undefined>;
@@ -63,7 +62,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private _confirmationService: ConfirmationService,
     private _formBuilder: FormBuilder,
     private _frndsAppSvc: FrndsAppService,
-    private _store: Store
+    private store: Store
   ) { }
 
   // -----------------------------------------------------------------------------------------------------
@@ -75,11 +74,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
    */
 
   ngOnInit(): void {
-    this.editMode$ = this._store
+    // Edit mode check for editable form field
+    this.editMode$ = this.store
       .select(isEditStatus)
       .pipe(takeUntil(this._unsubscribeAll));
 
     this.initializeForm();
+
     // Open the drawer
     this._userListComponent.matDrawer?.open();
     this.initializeValues();
@@ -124,18 +125,23 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeValues() {
-    this.users$ = this._store
+    // Users List
+    this.users$ = this.store
       .select(getAllUsers)
       .pipe(takeUntil(this._unsubscribeAll));
-    this.user$ = this._store
+
+    // Selected User List
+    this.user$ = this.store
       .select(getSelectedUser)
       .pipe(takeUntil(this._unsubscribeAll));
-    this.isNew$ = this._store
-      .select(newUserInit)
-      .pipe(takeUntil(this._unsubscribeAll));
+
+    // Map the user list to populated the friends' dropdown for
+    // a user after excluding the selected user
+
+    // The block also checks the values to be populated in the form field
     this.user$.subscribe((res) => {
       this.userForm.reset();
-      console.log(res)
+
       if (res) {
         this.user$ = of(res);
         this.users$.subscribe((user) => {
@@ -163,10 +169,11 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this.userForm.reset();
         this.user$ = of(new User());
       }
+
     });
+
     this._changeDetectorRef.markForCheck();
   }
-
 
   /**
    * Form control for the friends' name
@@ -175,6 +182,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
     return this.userForm.get('friendsNameList') as FormControl;
   }
 
+  /**
+ * Error message handler for forms
+ */
   getErrorMessage() {
     this.errorMessages = [];
 
@@ -296,7 +306,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
    * @param editMode
    */
   toggleEditMode(id: string, user: User): void {
-    this._store.dispatch(editExistingUserTrigger({ id: id, user: user }));
+    this.store.dispatch(editExistingUserTrigger({ id: id, user: user }));
     const users = this._frndsAppSvc.userList;
     if (user) {
       this.filteredUsers = users.filter((res2) => res2.id !== user.id);
@@ -306,7 +316,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this._store.dispatch(clearUserSelection());
+    this.store.dispatch(clearUserSelection());
   }
 
   /**
@@ -339,7 +349,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
           userData.friends
         );
       }
-      this._store.dispatch(new UpdateUser(userData));
+      this.store.dispatch(new UpdateUser(userData));
     } else {
       userData.id = uuid();
       userData.chartData = [];
@@ -348,9 +358,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
           userData.friends
         );
       }
-      this._store.dispatch(addNewUser({ user: userData }));
+      this.store.dispatch(addNewUser({ user: userData }));
     }
-    // this._store.dispatch(getUserById({ id: userData.id }));
+    // this.store.dispatch(getUserById({ id: userData.id }));
     this._changeDetectorRef.markForCheck();
   }
 
@@ -376,7 +386,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       if (result === 'confirmed') {
         // Get the current user id
         const id = this.userForm.controls.id.value;
-        this._store.dispatch(deleteExistingUser({ id: id }));
+        this.store.dispatch(deleteExistingUser({ id: id }));
         // Mark for check
         this._changeDetectorRef.markForCheck();
       }

@@ -111,7 +111,8 @@ The following assumpitons were made to the form fields
 - Friends
   - Friends are not a required field
   - API will send friends' list as an array of ID strings
-  - UI will drive the business logic of mapping the friends' data from the incoming ID diels.
+  - UI will drive the business logic of mapping the friends' data from the incoming ID data.
+  - An user's friends' list is mutually exclusive i.e. when an user 'X' adds user 'Y as a friend, 'Y' shows up as friend in 'X's' friends list but not vice versa.
 
 ## MODIFYING MOCK DATA
 
