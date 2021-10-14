@@ -4,11 +4,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { StoreModule } from '@ngrx/store';
 
 import { ConfirmationService, ConfirmationModule } from '@secureworks/confirmation';
 import { IconsModule } from '@secureworks/icons';
 import { DetailsComponent } from './details.component';
 import { ListComponent } from './../list/list.component';
+import { FRNDS_APP_FEATURE_KEY, initReducer } from '../../+state/reducers/frnds_app_entity.reducer';
 
 describe('DetailsComponent', () => {
   let component: DetailsComponent;
@@ -24,7 +26,12 @@ describe('DetailsComponent', () => {
         MatIconModule,
         MatTooltipModule,
         IconsModule,
-        ConfirmationModule
+        ConfirmationModule,
+        StoreModule.forRoot({}),
+        StoreModule.forFeature(
+          FRNDS_APP_FEATURE_KEY,
+          initReducer
+        )
       ],
       declarations: [ DetailsComponent ],
       providers: [

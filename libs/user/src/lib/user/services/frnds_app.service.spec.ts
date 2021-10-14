@@ -13,9 +13,9 @@ import { StoreModule, Store } from '@ngrx/store';
 import { ConfirmationModule, ConfirmationService } from '@secureworks/confirmation';
 import { IconsShareableModule } from '@secureworks/icons';
 import { MockApiRequestsModule } from '@secureworks/mockApiRequests';
-import { FRNDS_APP_FEATURE_KEY, initReducer } from '../+state/reducers/frnds_app_init.reducer';
 import { ListComponent } from '../components/list/list.component';
 import { FrndsAppService } from './frnds_app.service';
+import { FRNDS_APP_FEATURE_KEY, initReducer } from './../+state/reducers/frnds_app_entity.reducer';
 
 describe('FrndsAppService', () => {
   let service: FrndsAppService;

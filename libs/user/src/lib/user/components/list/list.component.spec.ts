@@ -12,9 +12,9 @@ import { Store, StoreModule } from '@ngrx/store';
 import { ConfirmationModule, ConfirmationService } from '@secureworks/confirmation';
 import { MockApiRequestsModule } from '@secureworks/mockApiRequests';
 import { ListComponent } from './list.component';
-import { FRNDS_APP_FEATURE_KEY, initReducer } from '../../+state/reducers/frnds_app_init.reducer';
 import { IconsShareableModule } from '@secureworks/icons';
 import { MatButtonModule } from '@angular/material/button';
+import { FRNDS_APP_FEATURE_KEY, initReducer } from '../../+state/reducers/frnds_app_entity.reducer';
 
 describe('ListComponent', () => {
   let component: ListComponent;
