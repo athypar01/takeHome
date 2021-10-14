@@ -8,6 +8,7 @@
 - Tech Stack
 - Prerequisites
 - Quick Start
+- Assumpitons
 - Modifying mock data
 - File Organization
 
@@ -81,6 +82,38 @@ Run end-to-end tests
 
 - Run `nx run-many --target=e2e --all=true` from the CLI to run all end-to-end tests.
 
+## ASSUMPTIONS
+
+---
+
+The following assumpitons were made to the form fields
+
+- Name
+
+  - Name is a required field
+  - Name will be a minimum of 2 character and a max of 30 characters
+  - Name will be not start or end with special characters
+  - Name will not have special characters
+  - Name will not contain numbers
+
+- Age
+
+  - Age is a required field
+  - Age will be numeric
+  - Min Age is 1 and Max Age is 999
+
+- Weight
+
+  - Weight is a required field
+  - Weight will be numeric
+  - Min weight is 1 and max weight is 9999
+
+- Friends
+  - Friends are not a required field
+  - API will send friends' list as an array of ID strings
+  - UI will drive the business logic of mapping the friends' data from the incoming ID data.
+  - An user's friends' list is mutually exclusive i.e. when an user 'X' adds user 'Y as a friend, 'Y' shows up as friend in 'X's' friends list but not vice versa.
+
 ## MODIFYING MOCK DATA
 
 ---
@@ -88,7 +121,6 @@ Run end-to-end tests
 To modify the initial data load, modify the below file
 
 - [data.ts](libs/mock-api-data/src/lib/user-list/data.ts)
-
 
 ## FILE ORGANIZATION
 

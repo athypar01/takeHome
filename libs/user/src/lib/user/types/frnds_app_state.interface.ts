@@ -1,8 +1,7 @@
-import { SimpleDataModel } from './../components/charts/data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EntityState } from "@ngrx/entity";
 
-import { FRNDS_APP_FEATURE_KEY } from "../+state/reducers/frnds_app_init.reducer";
+import { FRNDS_APP_FEATURE_KEY } from '../+state/reducers/frnds_app_entity.reducer';
 
 /**
  * Interface for the 'User' data
@@ -51,14 +50,18 @@ export interface Update<User> {
 }
 
 export interface FrndsAppStateInterface extends EntityState<User> {
-  validationErrors: any;
+  isNew:boolean;
+  loaded: boolean;
   editToggleStatus: boolean;
-  isSubmitting: boolean | null;
-  isNew:boolean | null;
-  loaded: boolean | null;
-  users?: User[] | null;
-  user?: User;
-  error?: HttpErrorResponse | null;
-  selectedUserId?: string | null;
+  isSubmitting: boolean;
   queryParam?: string | null;
+  selectedUserId?: string | null;
+  error?: HttpErrorResponse | null;
+  users?: User[]
+}
+
+export interface SimpleDataModel {
+  name: string;
+  value: string;
+  color?: string;
 }

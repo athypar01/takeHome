@@ -2,7 +2,7 @@
 import { assign, cloneDeep } from 'lodash-es';
 import { Injectable } from '@angular/core';
 
-import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds-app-state.interface';
+import { MockApiResponse, MockApiResponseMainBody } from './../../../../user/src/lib/user/types/frnds_app_state.interface';
 import { MockApiRequestsService } from '@secureworks/mockApiRequests';
 import { userList as userData } from './data';
 
@@ -79,7 +79,7 @@ export class UserListMockApi {
         this.response.response.users = users;
 
         // Return the response
-        return [200, this.response];
+        return [200, users];
       });
 
     // -----------------------------------------------------------------------------------------------------
@@ -165,12 +165,8 @@ export class UserListMockApi {
           }
         });
 
-        this.response.success = true;
-        this.response.response = new MockApiResponseMainBody();
-        this.response.response.users = this._userList;
-
         // Return the response
-        return [200, this.response];
+        return [200, true];
       });
   }
 }

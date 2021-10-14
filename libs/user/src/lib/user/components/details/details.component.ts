@@ -1,5 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { newUserInit } from './../../+state/selectors/frnds_app.selectors';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
 import { Store } from '@ngrx/store';
 import { Observable, of, Subject } from 'rxjs';
@@ -8,13 +21,20 @@ import { v4 as uuid } from 'uuid';
 
 import { ConfirmationService } from '@secureworks/confirmation';
 import { ListComponent } from '../list/list.component';
-import { User } from '../../types/frnds-app-state.interface';
-import { getAllUsers, getSelectedUser, isEditStatus } from '../../+state/selectors/frnds_app.selectors';
-import { frndsAppSelectUserClickAction, frndsAppUpdateUserInitAction, UpdateUser } from '../../+state/actions/frnds_select_user.actions';
-import { addNewUser } from '../../+state/actions/frnds_new_user.actions';
-import { clearUserSelection, deleteExistingUser } from '../../+state/actions/frnds_detail.actions';
+import {
+  getAllUsers,
+  getSelectedUser,
+  isEditStatus,
+} from '../../+state/selectors/frnds_app.selectors';
 import { FrndsAppService } from '../../services/frnds_app.service';
-import { BackendErrorsInterface } from '../../types/backendErrors.interface';
+import { User } from '../../types/frnds_app_state.interface';
+import { UpdateUser } from '../../+state/actions/frnds_app_entity.actions';
+import {
+  addNewUser,
+  clearUserSelection,
+  deleteExistingUser,
+  editExistingUserTrigger,
+} from '../../+state/actions/frnds_app_http.actions';
 
 @Component({
   selector: 'user-details',
@@ -23,7 +43,6 @@ import { BackendErrorsInterface } from '../../types/backendErrors.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailsComponent implements OnInit, OnDestroy {
-
   selected: string;
   friends: User[] = [];
   filteredUsers: User[] = [];
@@ -32,7 +51,6 @@ export class DetailsComponent implements OnInit, OnDestroy {
   editMode$: Observable<boolean>;
   user$: Observable<User | null | undefined>;
   users$: Observable<User[] | null | undefined>;
-  backendErrors$: Observable<BackendErrorsInterface | null>
   selectedId$: Observable<string | null | undefined>;
   currentUserId: string;
   errorMessages: string[] = [];
@@ -44,20 +62,33 @@ export class DetailsComponent implements OnInit, OnDestroy {
     private _confirmationService: ConfirmationService,
     private _formBuilder: FormBuilder,
     private _frndsAppSvc: FrndsAppService,
-    private _store: Store
+    private store: Store
   ) { }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Lifecycle hooks
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * On init
+   */
+
   ngOnInit(): void {
-    this.editMode$ = this._store.select(isEditStatus).pipe(takeUntil(this._unsubscribeAll));
+    // Edit mode check for editable form field
+    this.editMode$ = this.store
+      .select(isEditStatus)
+      .pipe(takeUntil(this._unsubscribeAll));
+
     this.initializeForm();
+
     // Open the drawer
     this._userListComponent.matDrawer?.open();
     this.initializeValues();
   }
 
   /**
- * On destroy
- */
+   * On destroy
+   */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
@@ -72,12 +103,76 @@ export class DetailsComponent implements OnInit, OnDestroy {
     // Create the user form
     this.userForm = this._formBuilder.group({
       id: new FormControl(''),
-      name: new FormControl('', [Validators.required, Validators.pattern("^([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}")]),
-      age: new FormControl('', [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$"), Validators.maxLength(3)]),
-      weight: new FormControl('', [Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$"), Validators.maxLength(4)]),
+      name: new FormControl('', [
+        Validators.required,
+        Validators.pattern("^([a-zA-Z',.-]+( [a-zA-Z',.-]+)*){2,30}"),
+      ]),
+      age: new FormControl('', [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern('^[0-9]*$'),
+        Validators.maxLength(3),
+      ]),
+      weight: new FormControl('', [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern('^[0-9]*$'),
+        Validators.maxLength(4),
+      ]),
       friendsNameList: new FormControl([]),
       friends: new FormControl([]),
     });
+  }
+
+  initializeValues() {
+    // Users List
+    this.users$ = this.store
+      .select(getAllUsers)
+      .pipe(takeUntil(this._unsubscribeAll));
+
+    // Selected User List
+    this.user$ = this.store
+      .select(getSelectedUser)
+      .pipe(takeUntil(this._unsubscribeAll));
+
+    // Map the user list to populated the friends' dropdown for
+    // a user after excluding the selected user
+
+    // The block also checks the values to be populated in the form field
+    this.user$.subscribe((res) => {
+      this.userForm.reset();
+
+      if (res) {
+        this.user$ = of(res);
+        this.users$.subscribe((user) => {
+          if (user) {
+            this.filteredUsers = user.filter((res2) => res2.id !== res.id);
+          } else {
+            this.filteredUsers = [];
+          }
+        });
+        this.userForm.patchValue(res);
+        if (res && res.friends) {
+          const names: string[] = [];
+          res.friends.forEach((friend: User) => {
+            names.push(friend.name);
+          });
+          this.friendsFormControl.setValue(names);
+        }
+        this._changeDetectorRef.markForCheck();
+      } else {
+        this.users$.subscribe((user) => {
+          if (user) {
+            this.filteredUsers = user;
+          }
+        });
+        this.userForm.reset();
+        this.user$ = of(new User());
+      }
+
+    });
+
+    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -87,52 +182,87 @@ export class DetailsComponent implements OnInit, OnDestroy {
     return this.userForm.get('friendsNameList') as FormControl;
   }
 
+  /**
+ * Error message handler for forms
+ */
   getErrorMessage() {
     this.errorMessages = [];
 
     this.userForm.markAllAsTouched();
 
-    if (this.userForm.controls.name.hasError('required') && this.userForm.controls.name.touched) {
+    if (
+      this.userForm.controls.name.hasError('required') &&
+      this.userForm.controls.name.touched
+    ) {
       this.errorMessages.push('Name is required');
     }
 
-    if (this.userForm.controls.name.hasError('pattern') && this.userForm.controls.name.touched){
+    if (
+      this.userForm.controls.name.hasError('pattern') &&
+      this.userForm.controls.name.touched
+    ) {
       this.errorMessages.push('Name must be min 2 characters');
       this.errorMessages.push('Name must have a max of 30 characters');
-      this.errorMessages.push('Name must not begin or end with special charcters');
+      this.errorMessages.push(
+        'Name must not begin or end with special charcters'
+      );
     }
 
-    if (this.userForm.controls.age.hasError('required') && this.userForm.controls.age.touched){
+    if (
+      this.userForm.controls.age.hasError('required') &&
+      this.userForm.controls.age.touched
+    ) {
       this.errorMessages.push('Age is required');
     }
 
-    if (this.userForm.controls.weight.hasError('required') && this.userForm.controls.weight.touched){
+    if (
+      this.userForm.controls.weight.hasError('required') &&
+      this.userForm.controls.weight.touched
+    ) {
       this.errorMessages.push('Weight is required');
     }
 
-    if (this.userForm.controls.age.hasError('min') && this.userForm.controls.age.touched){
+    if (
+      this.userForm.controls.age.hasError('min') &&
+      this.userForm.controls.age.touched
+    ) {
       this.errorMessages.push('Min age must be above 1');
     }
 
-    if (this.userForm.controls.weight.hasError('min')&& this.userForm.controls.weight.touched){
+    if (
+      this.userForm.controls.weight.hasError('min') &&
+      this.userForm.controls.weight.touched
+    ) {
       this.errorMessages.push('Min age must be above 1');
     }
 
-    if (this.userForm.controls.age.hasError('pattern') && this.userForm.controls.age.touched){
+    if (
+      this.userForm.controls.age.hasError('pattern') &&
+      this.userForm.controls.age.touched
+    ) {
       this.errorMessages.push('Age must be numeric');
       this.errorMessages.push('Max age is 999');
     }
 
-    if (this.userForm.controls.weight.hasError('pattern') && this.userForm.controls.weight.touched){
+    if (
+      this.userForm.controls.weight.hasError('pattern') &&
+      this.userForm.controls.weight.touched
+    ) {
       this.errorMessages.push('Weight must be numeric');
       this.errorMessages.push('Max weight is 9999');
     }
 
-    if (this.userForm.controls.age.hasError('maxlength') && this.userForm.controls.age.touched){
+    if (
+      this.userForm.controls.age.hasError('maxlength') &&
+      this.userForm.controls.age.touched
+    ) {
       this.errorMessages.push('Max age is 999');
     }
 
-    if (this.userForm.controls.weight.hasError('maxlength') && this.userForm.controls.weight.touched){
+    if (
+      this.userForm.controls.weight.hasError('maxlength') &&
+      this.userForm.controls.weight.touched
+    ) {
       this.errorMessages.push('Max weight is 9999');
     }
 
@@ -145,83 +275,48 @@ export class DetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  initializeValues() {
-    this.users$ = this._store.select(getAllUsers).pipe(takeUntil(this._unsubscribeAll));
-    this.user$ = this._store.select(getSelectedUser).pipe(takeUntil(this._unsubscribeAll));
-    this.user$.subscribe(res => {
-      this.userForm.reset();
-      if (res) {
-        this.user$ = of(res);
-        this.users$.subscribe((user) => {
-          if (user) {
-            this.filteredUsers = user.filter(res2 => res2.id !== res.id);
-          } else {
-            this.filteredUsers = [];
-          }
-        })
-        this.userForm.patchValue(res);
-        if (res && res.friends) {
-          const names: string[] = [];
-          res.friends.forEach((x) => {
-            names.push(x.name);
-          })
-          this.friendsFormControl.setValue(names);
-        }
-        this._changeDetectorRef.markForCheck();
-      } else {
-        this.users$.subscribe((user) => {
-          if (user) {
-            this.filteredUsers = user;
-          }
-        })
-        this.userForm.reset();
-        this.user$ = of(new User());
-      }
-    });
-    this._changeDetectorRef.markForCheck();
-  }
-
-
   /**
- * Compate funciton for multiselect
- */
-  public objectComparisonFunction = function (option: any, value: any): boolean {
+   * Compate funciton for multiselect
+   */
+  public objectComparisonFunction = function (
+    option: any,
+    value: any
+  ): boolean {
     return option?.id === value?.id;
-  }
+  };
 
   /**
-  * Hack to show to the name of friends on selections
-  *
-  * @param event
-  */
+   * Hack to show to the name of friends on selections
+   *
+   * @param event
+   */
   onUserSelection(event: any) {
-    const names: string[] = []
+    const names: string[] = [];
     event.value.forEach((x: any) => {
-      names.push(x.name)
-    })
+      names.push(x.name);
+    });
     this.userForm.get('friends')?.setValue(event.value);
     this.friendsFormControl?.setValue(names);
     this._changeDetectorRef.markForCheck();
   }
 
   /**
- * Toggle edit mode
- *
- * @param editMode
- */
+   * Toggle edit mode
+   *
+   * @param editMode
+   */
   toggleEditMode(id: string, user: User): void {
-    this._store.dispatch(frndsAppUpdateUserInitAction({ id: id, user: user }));
-    this._changeDetectorRef.markForCheck();
+    this.store.dispatch(editExistingUserTrigger({ id: id, user: user }));
     const users = this._frndsAppSvc.userList;
     if (user) {
-      this.filteredUsers = users.filter(res2 => res2.id !== user.id);
+      this.filteredUsers = users.filter((res2) => res2.id !== user.id);
     } else {
       this.filteredUsers = [];
     }
   }
 
   cancel() {
-    this._store.dispatch(clearUserSelection());
+    this.store.dispatch(clearUserSelection());
   }
 
   /**
@@ -232,43 +327,46 @@ export class DetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
- * Track by function for ngFor loops
- *
- * @param index
- * @param item
- */
+   * Track by function for ngFor loops
+   *
+   * @param index
+   * @param item
+   */
   trackByFn(index: number, item: any): any {
     return item.id || index;
   }
 
   /**
- * Update the user and user contacts
- */
+   * Update the user and user contacts
+   */
 
   updateUser(): void {
     // Get the contact object
     const userData = this.userForm.value;
     if (userData.id && userData.id !== 'new') {
       if (userData.friends && userData.friends.length > 0) {
-        userData.chartData = this._frndsAppSvc.generateChartData(userData.friends);
+        userData.chartData = this._frndsAppSvc.generateChartData(
+          userData.friends
+        );
       }
-      this._store.dispatch(new UpdateUser(userData));
-
+      this.store.dispatch(new UpdateUser(userData));
     } else {
       userData.id = uuid();
       userData.chartData = [];
       if (userData.friends && userData.friends.length > 0) {
-        userData.chartData = this._frndsAppSvc.generateChartData(userData.friends);
+        userData.chartData = this._frndsAppSvc.generateChartData(
+          userData.friends
+        );
       }
-      this._store.dispatch(addNewUser({ user: userData }));
+      this.store.dispatch(addNewUser({ user: userData }));
     }
-    this._store.dispatch(frndsAppSelectUserClickAction({ query: userData.id }));
+    // this.store.dispatch(getUserById({ id: userData.id }));
     this._changeDetectorRef.markForCheck();
   }
 
   /**
- * Delete the user and user contacts
- */
+   * Delete the user and user contacts
+   */
   deleteUser() {
     // Open the confirmation dialog
     const confirmation = this._confirmationService.open({
@@ -288,7 +386,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
       if (result === 'confirmed') {
         // Get the current user id
         const id = this.userForm.controls.id.value;
-        this._store.dispatch(deleteExistingUser({ id: id }));
+        this.store.dispatch(deleteExistingUser({ id: id }));
         // Mark for check
         this._changeDetectorRef.markForCheck();
       }

@@ -5,11 +5,11 @@ import { of } from 'rxjs';
 import { switchMap, catchError, map } from 'rxjs/operators';
 
 import { FrndsAppService } from '../../services/frnds_app.service';
-import { User } from '../../types/frnds-app-state.interface';
-import { frndsAppQueryAction, frndsAppQueryActionFailure, frndsAppQueryActionSuccess } from '../actions/frnds-query.actions';
+import { User } from '../../types/frnds_app_state.interface';
+import { getUserByQuery, getUserByQueryFailure, getUserByQuerySuccess } from '../actions/frnds_app_http.actions';
 
 @Injectable()
-export class FrndsQueryEffects {
+export class GetUsersByQueryEffects {
 
   constructor(
     private readonly actions$: Actions,
@@ -18,16 +18,16 @@ export class FrndsQueryEffects {
 
   query$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(frndsAppQueryAction),
+      ofType(getUserByQuery),
       switchMap(({ query }) => {
         return this._frndsAppService.searchUsers(query).pipe(
           map((users: User[]) => {
-            return frndsAppQueryActionSuccess({ users })
+            return getUserByQuerySuccess({ users })
           }),
 
           catchError((errorResponse: HttpErrorResponse) => {
             return of(
-              frndsAppQueryActionFailure({ error: errorResponse })
+              getUserByQueryFailure({ error: errorResponse })
             )
           })
         )

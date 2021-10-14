@@ -6,37 +6,39 @@ import { of } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 
 import { FrndsAppService } from '../../services/frnds_app.service';
-import { User } from '../../types/frnds-app-state.interface';
-import { frndsAppInitAction, frndsAppInitFailureAction, frndsAppInitSuccessAction } from '../actions/frnds_init.actions';
+import { User } from '../../types/frnds_app_state.interface';
+import {
+  initFrndsApp,
+  initFrndsAppFailure,
+  initFrndsAppSuccess,
+} from '../actions/frnds_app_http.actions';
 
 @Injectable()
-export class FrndsAppInitEffects {
-
+export class GetAllUsersEffects {
   constructor(
     private readonly actions$: Actions,
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _frndsAppService: FrndsAppService
-  ) { }
+  ) {}
 
   init$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(frndsAppInitAction),
+      ofType(initFrndsApp),
       switchMap(() => {
         return this._frndsAppService.getUserList().pipe(
           map((userList: User[]) => {
-            this._router.navigate(['../'], { relativeTo: this._activatedRoute });
-            return frndsAppInitSuccessAction({ users: userList });
+            this._router.navigate(['../'], {
+              relativeTo: this._activatedRoute,
+            });
+            return initFrndsAppSuccess({ users: userList });
           }),
 
           catchError((errorResponse: HttpErrorResponse) => {
-            return of(
-              frndsAppInitFailureAction({ error: errorResponse })
-            );
+            return of(initFrndsAppFailure({ error: errorResponse }));
           })
         );
       })
     );
   });
-
 }

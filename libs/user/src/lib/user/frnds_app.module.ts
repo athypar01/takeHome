@@ -27,20 +27,20 @@ import { ChartsComponent } from './components/charts/charts.component';
 import { UserComponent } from './components/user.component';
 import { DetailsComponent } from './components/details/details.component';
 import { ListComponent } from './components/list/list.component';
-import { FrndsAppInitEffects } from './+state/effects/frnds_init.effects';
-import { FRNDS_APP_FEATURE_KEY, initReducer } from './+state/reducers/frnds_app_init.reducer';
-import { FrndsQueryEffects } from './+state/effects/frnds-query.effects';
-import { FrndsNewUserEffects } from './+state/effects/frnds-newuser.effects';
-import { FrndsAppSelectUserEffects } from './+state/effects/frnds-selectuser.effects';
-import { ErrorMessagesComponent } from './components/error-messages/error-messages.component';
+import { FRNDS_APP_FEATURE_KEY, initReducer } from './+state/reducers/frnds_app_entity.reducer';
+import { GetUsersByQueryEffects } from './+state/effects/frnds_app_get_by_query.effects';
+import { GetAllUsersEffects } from './+state/effects/frnds_app_get_all.effects.';
+import { CreateUserEffects } from './+state/effects/frnds_app_create.effects';
+import { DeleteUserEffects } from './+state/effects/frnds_app_delete.effects';
+import { UpdateExistingUsersEffects } from './+state/effects/frnds_app_update.effects';
+import { GetUserByIdEffects } from './+state/effects/frnds_app_get_by_id.effects';
 
 @NgModule({
   declarations: [
     UserComponent,
     DetailsComponent,
     ListComponent,
-    ChartsComponent,
-    ErrorMessagesComponent
+    ChartsComponent
   ],
   imports: [
     RouterModule.forChild(userRoutes),
@@ -68,10 +68,12 @@ import { ErrorMessagesComponent } from './components/error-messages/error-messag
       initReducer
     ),
     EffectsModule.forFeature([
-      FrndsAppInitEffects,
-      FrndsQueryEffects,
-      FrndsNewUserEffects,
-      FrndsAppSelectUserEffects
+      GetAllUsersEffects,
+      GetUserByIdEffects,
+      GetUsersByQueryEffects,
+      CreateUserEffects,
+      UpdateExistingUsersEffects,
+      DeleteUserEffects
     ]),
   ],
   providers: [
