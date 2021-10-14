@@ -1,5 +1,5 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+Initial Version of the FrndsApp released
 
 ## 1.0.0 (2021-10-14)
